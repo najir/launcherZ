@@ -22,11 +22,16 @@ For example I will be looking to implement;
 	- RSS Feed for posts and updates   
 	- More in depth install instructions or details   
 
+	Project utilises PySide6 to take advantage of the QT6 framework. In this particular case QT Designer and QT
+	Creater were not used.
+
 ### Build
 	OS: Windows   
 	IDE: Visual Studio Community 2022   
-	Language: Python 3.6(?)   
-	Dependencies:   
+	Language: Python 3.9   
+	Dependencies(Requirements tx will be added):   
+	PySide6   
+
 
 ### Attributes
-	Empty   
+	https://github.com/rockisch/mhf-iel
