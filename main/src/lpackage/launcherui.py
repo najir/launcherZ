@@ -1,11 +1,11 @@
 
 from PySide6.QtCore import QSize, Qt
 from PySide6.QtWidgets import QApplication, QWidget, QMainWindow, QPushButton, QLabel, QVBoxLayout, QListWidget, QListWidgetItem, QLineEdit, QCheckBox, QStackedLayout, QHBoxLayout, QLineEdit
+from launcherdb import *
 
 '''
 Class that contains all the data needed for initial default servers
 '''
-
 class serverList():
     descriptionText = ""
     nameText = ""
@@ -87,6 +87,9 @@ class widgetAddServer(QWidget):
         layoutMain.addWidget(layoutEdit1)
         layoutMain.addWidget(layoutEdit2)
         layoutMain.addWidget(layoutEdit3)
+        layoutMain.addWidget(buttonSaveServer)
+        layoutMain.addWidget(buttonCancel)
+        layoutMain.addWidget(buttonSettings)
 
         self.setLayout(layout)
 
