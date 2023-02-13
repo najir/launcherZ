@@ -24,6 +24,7 @@
     <Compile Include="lpackage\launcherui.py" />
     <Compile Include="lpackage\launcherweb.py" />
     <Compile Include="LauncherZ.py" />
+    <Compile Include="lpackage\launcherdb.py" />
     <Compile Include="lpackage\__init__.py">
       <SubType>Code</SubType>
     </Compile>

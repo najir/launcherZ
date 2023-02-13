@@ -2,55 +2,64 @@
 from PySide6.QtCore import QSize, Qt
 from PySide6.QtWidgets import QApplication, QWidget, QMainWindow, QPushButton, QLabel, QVBoxLayout, QListWidget, QListWidgetItem, QLineEdit, QCheckBox, QStackedLayout, QHBoxLayout, QLineEdit
 from launcherdb import *
+from launcherui import *
 
 '''
 Class that contains all the data needed for initial default servers
 '''
 class serverList():
-    descriptionText = ""
-    nameText = ""
-    serverLogo = ""
-    ServerBanner = ""
-    serverIp = ""
-    serverInstall = ""
-    serverRss = ""
+    serverDict = {
+        "descriptionText" : "",
+        "nameText"        : "",
+        "serverLogo"      : "",
+        "ServerBanner"    : "",
+        "serverIp"        : "",
+        "serverInstall"   : "",
+        "serverRss"       : "",
+    }
     def myServer(self):
-        self.descriptionText = ""
-        self.nameText = ""
-        self.serverLogo = ""
-        self.ServerBanner = ""
-        self.serverIp = ""
-        self.serverInstall = ""
-        self.serverRss = ""
-        return
+        self.serverDict = {
+            "descriptionText" : "",
+            "nameText"        : "",
+            "serverLogo"      : "",
+            "ServerBanner"    : "",
+            "serverIp"        : "",
+            "serverInstall"   : "",
+            "serverRss"       : "",
+    }
     def xServer(self):
-        self.descriptionText = ""
-        self.nameText = ""
-        self.serverLogo = ""
-        self.ServerBanner = ""
-        self.serverIp = ""
-        self.serverInstall = ""
-        self.serverRss = ""
-        return
+        self.serverDict = {
+            "descriptionText" : "",
+            "nameText"        : "",
+            "serverLogo"      : "",
+            "ServerBanner"    : "",
+            "serverIp"        : "",
+            "serverInstall"   : "",
+            "serverRss"       : "",
+    }
     def yServer(self):
-        self.descriptionText = ""
-        self.nameText = ""
-        self.serverLogo = ""
-        self.ServerBanner = ""
-        self.serverIp = ""
-        self.serverInstall = ""
-        self.serverRss = ""
-        return
+        self.serverDict = {
+            "descriptionText" : "",
+            "nameText"        : "",
+            "serverLogo"      : "",
+            "ServerBanner"    : "",
+            "serverIp"        : "",
+            "serverInstall"   : "",
+            "serverRss"       : "",
+    }
     def zServer(self):
-        self.descriptionText = ""
-        self.nameText = ""
-        self.serverLogo = ""
-        self.ServerBanner = ""
-        self.serverIp = ""
-        self.serverInstall = ""
-        self.serverRss = ""
+        self.serverDict = {
+            "descriptionText" : "",
+            "nameText"        : "",
+            "serverLogo"      : "",
+            "ServerBanner"    : "",
+            "serverIp"        : "",
+            "serverInstall"   : "",
+            "serverRss"       : "",
+    }
+    def serverInit(self):
+        # Checks if default server exists in table, creates them if not
         return
-
 """
 Server list initial page. Brings out a list of available servers from text files
 List of servers, expected 5-10
@@ -110,14 +119,6 @@ class widgetPageServer(QWidget):
         layout.addWidget(buttonSettings)
 
         self.setLayout(layout)
-
-        
-        #Server list
-            #loops server from file
-            #Create widget with for serverlist that allows all details
-
-        #Settings button
-
 
 """
 Contains all of the details to a server
