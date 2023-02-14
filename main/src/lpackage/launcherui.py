@@ -1,8 +1,9 @@
 
+from ctypes import alignment
 from PySide6.QtCore import QSize, Qt
-from PySide6.QtWidgets import QApplication, QWidget, QMainWindow, QPushButton, QLabel, QVBoxLayout, QListWidget, QListWidgetItem, QLineEdit, QCheckBox, QStackedLayout, QHBoxLayout, QLineEdit
-from launcherdb import *
-from launcherui import *
+from PySide6.QtWidgets import QApplication, QWidget, QMainWindow, QPushButton, QLabel, QVBoxLayout, QListWidget, QListWidgetItem, QLineEdit, QCheckBox, QStackedLayout, QHBoxLayout, QLineEdit, QGridLayout, QSpacerItem, QSizePolicy
+from .launcherdb import *
+from .launcherui import *
 
 '''
 Class that contains all the data needed for initial default servers
@@ -67,8 +68,8 @@ Server Widget contains: Uptime-Icon, Server Name, Description, banner image
 A button for settings
 """
 class widgetAddServer(QWidget):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, parent):
+        super(widgetAddServer, self).__init__(parent)
 
         labelServerName = QLabel("Server Name")
         labelServerDesc = QLabel("Server Description")
@@ -93,32 +94,41 @@ class widgetAddServer(QWidget):
         layoutEdit3.addWidget(lineServerIP)
 
         layoutMain = QVBoxLayout()
-        layoutMain.addWidget(layoutEdit1)
-        layoutMain.addWidget(layoutEdit2)
-        layoutMain.addWidget(layoutEdit3)
+        layoutMain.addLayout(layoutEdit1)
+        layoutMain.addLayout(layoutEdit2)
+        layoutMain.addLayout(layoutEdit3)
         layoutMain.addWidget(buttonSaveServer)
         layoutMain.addWidget(buttonCancel)
         layoutMain.addWidget(buttonSettings)
 
-        self.setLayout(layout)
+        self.setLayout(layoutMain)
 
 class widgetPageServer(QWidget):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, parent):
+        super(widgetPageServer, self).__init__(parent)
 
         labelMainText = QLabel("Server List")
-        labelServerText = QLabel("")
         listWidgetServer = QListWidget()
         buttonSettings = QPushButton("Settings")
         buttonAddServer = QPushButton("AddServer")
+        buttonJoinServer = QPushButton("Join")
 
-        layout = QVBoxLayout()
-        layout.addWidget(labelMainText)
-        layout.addWidget(listWidgetServer)
-        layout.addWidget(buttonAddServer)
-        layout.addWidget(buttonSettings)
+        buttonSettings.clicked.connect(self.parent().on_buttonSettings_clicked)
+        buttonAddServer.clicked.connect(self.parent().on_buttonAddServer_clicked)
+        buttonJoinServer.clicked.connect(self.parent().on_buttonJoinServer_clicked)
 
-        self.setLayout(layout)
+        verticalSpacer = QSpacerItem(10, 10, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
+
+        layoutServer = QGridLayout()
+        layoutServer.addWidget(labelMainText, 0, 0, 1, 1, Qt.AlignBottom)
+        layoutServer.addWidget(listWidgetServer, 1, 0, 1, 4)
+        layoutServer.addWidget(buttonJoinServer, 3, 1, 1, 2)
+        layoutServer.addWidget(buttonSettings, 0, 3, 1, 1)
+        layoutServer.addWidget(buttonAddServer, 0, 2, 1, 1)
+        layoutServer.addItem(verticalSpacer, 2, 0)
+
+        self.setLayout(layoutServer)
+
 
 """
 Contains all of the details to a server
@@ -146,22 +156,38 @@ class widgetPageMain(QWidget):
 Main Server Window, called and actiavted on launcherZ
 """
 class mainWindow(QMainWindow):
+    layoutWindow = None
+    mainMenu = None
+    serverMenu = None
+    addServerMenu = None
+
     def __init__(self):
-        super().__init__()
+        super(mainWindow, self).__init__()
 
         self.setWindowTitle("LauncherZ")
         self.setFixedSize(QSize(1100, 600))
 
-        mainMenu = widgetPageMain()
-        serverMenu = widgetPageServer()
+        self.mainMenu = widgetPageMain()
+        self.serverMenu = widgetPageServer(self)
+        self.addServerMenu = widgetAddServer(self)
 
-        layout = QStackedLayout()
-        layout.addWidget(mainMenu)
-        layout.addWidget(serverMenu)
-        layout.setCurrentWidget(serverMenu)
-        serverMenu.show()
+        self.layoutWindow = QStackedLayout()
+        self.layoutWindow.addWidget(self.mainMenu)
+        self.layoutWindow.addWidget(self.addServerMenu)
+        self.layoutWindow.addWidget(self.serverMenu)
+        self.layoutWindow.setCurrentWidget(self.serverMenu)
+        self.serverMenu.show()
 
         baseWidget = QWidget()
-        baseWidget.setLayout(layout)
+        baseWidget.setLayout(self.layoutWindow)
 
         self.setCentralWidget(baseWidget)
+
+    def on_buttonSettings_clicked(self):
+        return
+
+    def on_buttonAddServer_clicked(self):
+        self.layoutWindow.setCurrentWidget(self.addServerMenu)
+
+    def on_buttonJoinServer_clicked(self):
+        return
