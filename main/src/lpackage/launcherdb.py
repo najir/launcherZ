@@ -64,16 +64,48 @@ class sqlServer():
                 print('SQLite connection closed')
 
     def sqlUpdate(serverDict, serverID):
-        sqlUpdate = "UPDATE SERVERS SET ("
-        sqlUpdate += "NAME = '"         +serverDict['serverName'] + "', "
-        sqlUpdate += "DESCRIPTION = '"  +serverDict['serverName'] + "', "
-        sqlUpdate += "IP = '"           +serverDict['serverName'] + "', "
-        sqlUpdate += "INSTALL = '"      +serverDict['serverName'] + "');"
-        sqlUpdate += "WHERE ID = "      +serverID
+        queryUpdate = "UPDATE SERVERS SET ("
+        queryUpdate += "NAME = '"         +serverDict['serverName'] + "', "
+        queryUpdate += "DESCRIPTION = '"  +serverDict['serverName'] + "', "
+        queryUpdate += "IP = '"           +serverDict['serverName'] + "', "
+        queryUpdate += "INSTALL = '"      +serverDict['serverName'] + "');"
+        queryUpdate += "WHERE ID = "      +serverID
         try:
             sqliteConnection = sqlite3.connect('server.db')
             sqlCursor = sqliteConnection.cursor
-            sqlCursor.execute(sqlUpdate)
+            sqlCursor.execute(queryUpdate)
+
+        except sqlite3.Error as error:
+            print('Error occurred - ', error)
+
+        finally:
+            if sqliteConnection:
+                sqliteConnection.close()
+                print('SQLite connection closed')
+
+    def sqlGetOne(serverID):
+        queryGetOne = "SELECT * FROM SERVERS WHERE ID = " + serverID
+        try:
+            sqliteConnection = sqlite3.connect('server.db')
+            sqlCursor = sqliteConnection.cursor
+            sqlCursor.execute(queryGetOne)
+            returnData = sqlCursor.fetchall()
+
+        except sqlite3.Error as error:
+            print('Error occurred - ', error)
+
+        finally:
+            if sqliteConnection:
+                sqliteConnection.close()
+                print('SQLite connection closed')
+
+    def sqlGetAll():
+        queryGetOne = "SELECT * FROM SERVERS"
+        try:
+            sqliteConnection = sqlite3.connect('server.db')
+            sqlCursor = sqliteConnection.cursor
+            sqlCursor.execute(queryGetOne)
+            returnData = sqlCursor.fetchall()
 
         except sqlite3.Error as error:
             print('Error occurred - ', error)

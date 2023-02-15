@@ -1,13 +1,12 @@
-
 from ctypes import alignment
 from PySide6.QtCore import QSize, Qt
 from PySide6.QtWidgets import QApplication, QWidget, QMainWindow, QPushButton, QLabel, QVBoxLayout, QListWidget, QListWidgetItem, QLineEdit, QCheckBox, QStackedLayout, QHBoxLayout, QLineEdit, QGridLayout, QSpacerItem, QSizePolicy
 from .launcherdb import *
 from .launcherui import *
 
-'''
-Class that contains all the data needed for initial default servers
-'''
+######################################
+# Default server information
+######################################
 class serverList():
     serverDict = {
         "descriptionText" : "",
@@ -61,48 +60,62 @@ class serverList():
     def serverInit(self):
         # Checks if default server exists in table, creates them if not
         return
-"""
-Server list initial page. Brings out a list of available servers from text files
-List of servers, expected 5-10
-Server Widget contains: Uptime-Icon, Server Name, Description, banner image
-A button for settings
-"""
+
+
+
+######################################
+# Adding addition servers page
+######################################
 class widgetAddServer(QWidget):
     def __init__(self, parent):
+        layoutMain = None
         super(widgetAddServer, self).__init__(parent)
 
         labelServerName = QLabel("Server Name")
         labelServerDesc = QLabel("Server Description")
         labelServerIP = QLabel("Server IP")
-        buttonSettings = QPushButton("Settings")
+
         buttonSaveServer = QPushButton("Save")
         buttonCancel = QPushButton("Cancel")
+
         lineServerName = QLineEdit("")
         lineServerDesc = QLineEdit("")
         lineServerIP = QLineEdit("")
 
-        layoutEdit1 = QHBoxLayout()
+        verticalSpacer = QSpacerItem(10, 250, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
+
+        layoutEdit1 = QVBoxLayout()
         layoutEdit1.addWidget(labelServerName)
         layoutEdit1.addWidget(lineServerName)
         
-        layoutEdit2 = QHBoxLayout()
+        layoutEdit2 = QVBoxLayout()
         layoutEdit2.addWidget(labelServerDesc)
         layoutEdit2.addWidget(lineServerDesc)
 
-        layoutEdit3 = QHBoxLayout()
+        layoutEdit3 = QVBoxLayout()
         layoutEdit3.addWidget(labelServerIP)
         layoutEdit3.addWidget(lineServerIP)
 
-        layoutMain = QVBoxLayout()
-        layoutMain.addLayout(layoutEdit1)
-        layoutMain.addLayout(layoutEdit2)
-        layoutMain.addLayout(layoutEdit3)
-        layoutMain.addWidget(buttonSaveServer)
-        layoutMain.addWidget(buttonCancel)
-        layoutMain.addWidget(buttonSettings)
+        self.layoutMain = QVBoxLayout()
+        self.layoutMain.addItem(verticalSpacer)
+        self.layoutMain.addLayout(layoutEdit1)
+        self.layoutMain.addLayout(layoutEdit2)
+        self.layoutMain.addLayout(layoutEdit3)
+        self.layoutMain.addItem(verticalSpacer)
+        self.layoutMain.addWidget(buttonSaveServer)
+        self.layoutMain.addWidget(buttonCancel)
+        self.layoutMain.setAlignment(Qt.AlignTop)
+
+        buttonSaveServer.clicked.connect(self.parent().on_buttonSaveServer_clicked(self))
+        buttonCancel.clicked.connect(self.parent().on_buttonCancel_clicked)
 
         self.setLayout(layoutMain)
 
+
+
+######################################
+# Server List Page
+######################################
 class widgetPageServer(QWidget):
     def __init__(self, parent):
         super(widgetPageServer, self).__init__(parent)
@@ -130,31 +143,62 @@ class widgetPageServer(QWidget):
         self.setLayout(layoutServer)
 
 
-"""
-Contains all of the details to a server
-Name, Descriptions, Smaller details or info, Logo image, banner/ad image
-Login information, Save username checkbox, News feeds, potential server calls
-"""
+
+######################################
+# Individual Server Pages
+######################################
 class widgetPageMain(QWidget):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, parent):
+        super(widgetPageMain, self).__init__(parent)
         labelDesc = QLabel("")
         labelTitle = QLabel("")
         labelRss = QLabel("")
         labelInstall = QLabel("")
-        editUser = QLineEdit("")
-        #This needs to be hidden
-        editPass = QLineEdit("")
-        checkboxUser = QCheckBox("")
-        buttonLog = QPushButton("")
-        buttonSettings = QPushButton("")
-        buttonPlay = QPushButton("")
-        buttonBack = QPushButton("")
+
+        editUser = QLineEdit("Enter")
+        editPass = QLineEdit("Enter")
+        checkboxUser = QCheckBox("Save Username?")
+        buttonLog = QPushButton("Login")
+        buttonPlay = QPushButton("Start Game")
+
+        buttonBack = QPushButton("Back")
+        buttonSettings = QPushButton("Settings")
+
+        buttonPlay.hide()
+        buttonBack.clicked.connect(self.parent().on_buttonBack_clicked)
+        buttonSettings.clicked.connect(self.parent().on_buttonSettings_clicked)
+
+        loginLayout = QVBoxLayout()
+        loginLayout.addWidget(QLabel("User Name"))
+        loginLayout.addWidget(editUser)
+        loginLayout.addWidget(QLabel("Password"))
+        loginLayout.addWidget(editPass)
+        loginLayout.addWidget(checkboxUser)
+        loginLayout.addWidget(buttonLog)
+
+        layoutPage = QGridLayout()
+        layoutPage.addWidget(labelTitle, 0, 1)
+        layoutPage.addWidget(buttonSettings, 0, 2)
+        layoutPage.addWidget(buttonBack, 0, 0)
+        layoutPage.addLayout(loginLayout, 3, 0)
+ 
 
 
-"""
-Main Server Window, called and actiavted on launcherZ
-"""
+######################################
+# Individual Server Pages
+######################################
+class widgetPageSetting(QWidget):
+    def __init__(self, parent):
+        super(widgetPageSetting, parent).__init__(self)
+
+        labelFilePath = ""
+
+
+
+
+######################################
+# Main Window for UI
+######################################
 class mainWindow(QMainWindow):
     layoutWindow = None
     mainMenu = None
@@ -167,7 +211,7 @@ class mainWindow(QMainWindow):
         self.setWindowTitle("LauncherZ")
         self.setFixedSize(QSize(1100, 600))
 
-        self.mainMenu = widgetPageMain()
+        self.mainMenu = widgetPageMain(self)
         self.serverMenu = widgetPageServer(self)
         self.addServerMenu = widgetAddServer(self)
 
@@ -184,10 +228,23 @@ class mainWindow(QMainWindow):
         self.setCentralWidget(baseWidget)
 
     def on_buttonSettings_clicked(self):
+        #Open up a new window with settings menu so I can reuse this on all pages
         return
 
     def on_buttonAddServer_clicked(self):
         self.layoutWindow.setCurrentWidget(self.addServerMenu)
 
     def on_buttonJoinServer_clicked(self):
-        return
+        self.layoutWindow.setCurrentWidget(self.mainMenu)
+
+    def on_buttonBack_clicked(self):
+        self.layoutWindow.setCurrentWidget(self.mainMenu)
+    
+    def on_buttonCancel_clicked(self):
+        self.layoutWindow.setCurrentWidget(self.serverMenu)
+
+    def on_buttonSaveServer_clicked(widget, self):
+        self.layoutWindow.setCurrentWidget(self.serverMenu)
+        serverList.serverDict.update({"nameText" : widget.layoutMain.layoutEdit1.lineServerName.text()})
+        serverList.serverDict.update({"descriptionText" : widget.layoutMain.layoutEdit2.lineServerDesc.text()})
+        serverList.serverDict.update({"serverIP" : widget.layoutMain.layoutEdit3.lineServerIP.text()})
