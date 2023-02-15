@@ -1,8 +1,9 @@
 from ctypes import alignment
 from PySide6.QtCore import QSize, Qt
+from PySide6.QtGui import QPixmap
 from PySide6.QtWidgets import QApplication, QWidget, QMainWindow, QPushButton, QLabel, QVBoxLayout, QListWidget, QListWidgetItem, QLineEdit, QCheckBox, QStackedLayout, QHBoxLayout, QLineEdit, QGridLayout, QSpacerItem, QSizePolicy
-from launcherdb import sqlServer
-from launcherui import webControllerClass
+from .launcherdb import sqlServer
+from .launcherweb import webControllerClass
 
 ######################################
 # Default server information
@@ -133,12 +134,12 @@ class widgetPageServer(QWidget):
         verticalSpacer = QSpacerItem(10, 10, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
 
         layoutServer = QGridLayout()
-        layoutServer.addWidget(labelMainText, 0, 0, 1, 1, Qt.AlignBottom)
+        layoutServer.addWidget(labelMainText,    0, 0, 1, 1, Qt.AlignBottom)
         layoutServer.addWidget(listWidgetServer, 1, 0, 1, 4)
         layoutServer.addWidget(buttonJoinServer, 3, 1, 1, 2)
-        layoutServer.addWidget(buttonSettings, 0, 3, 1, 1)
-        layoutServer.addWidget(buttonAddServer, 0, 2, 1, 1)
-        layoutServer.addItem(verticalSpacer, 2, 0)
+        layoutServer.addWidget(buttonSettings,   0, 3, 1, 1)
+        layoutServer.addWidget(buttonAddServer,  0, 2, 1, 1)
+        layoutServer.addItem(verticalSpacer,     2, 0)
 
         self.setLayout(layoutServer)
 
@@ -151,15 +152,17 @@ class widgetPageMain(QWidget):
     def __init__(self, parent):
         super(widgetPageMain, self).__init__(parent)
         dbServer = sqlServer()
-        serverStruct = dbServer.sqlGetOne("")
+        serverStruct = dbServer.sqlGetOne(0)
         webController = webControllerClass()
-        labelRss = QLabel(webController.pullRss(serverStruct.serverRss))
-        mainImage = ""
-        bannerImage = ""
+        labelRss = QLabel(webController.pullRss(serverStruct['serverRss']))
+        logoImage = QLabel()
+        bannerImage = QLabel()
+        bannerImage.setPixmap(QPixmap(webController.pullImage(serverStruct['serverBanner'])))
+        logoImage.setPixmap(QPixmap(webController.pullImage(serverStruct['serverLogo'])))
 
-        labelDesc = QLabel(serverStruct.serverDescription)
-        labelTitle = QLabel(serverStruct.serverTitle)
-        labelInstall = QLabel(serverStruct.serverInstall)
+        labelDesc = QLabel(serverStruct['serverDescription'])
+        labelTitle = QLabel(serverStruct['serverTitle'])
+        labelInstall = QLabel(serverStruct['serverInstall'])
 
         editUser = QLineEdit("Enter")
         editPass = QLineEdit("Enter")
@@ -183,15 +186,21 @@ class widgetPageMain(QWidget):
         loginLayout.addWidget(buttonLog)
 
         layoutPage = QGridLayout()
-        layoutPage.addWidget(labelTitle, 0, 1)
-        layoutPage.addWidget(buttonSettings, 0, 2)
-        layoutPage.addWidget(buttonBack, 0, 0)
-        layoutPage.addLayout(loginLayout, 3, 0)
+        layoutPage.addWidget(labelTitle,     0, 2)
+        layoutPage.addWidget(labelDesc,      1, 0)
+        layoutPage.addWidget(labelRss,       1, 3)
+        layoutPage.addWidget(logoImage,      0, 1)
+        layoutPage.addWidget(bannerImage,    2, 0)
+        layoutPage.addWidget(buttonSettings, 0, 3)
+        layoutPage.addWidget(buttonBack,     0, 0)
+        layoutPage.addLayout(loginLayout,    3, 0)
+        layoutPage.addlayout(labelInstall,   4, 0)
  
 
 
 ######################################
 # Individual Server Pages
+# Still have to figure this page out
 ######################################
 class widgetPageSetting(QWidget):
     def __init__(self, parent):

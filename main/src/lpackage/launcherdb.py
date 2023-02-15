@@ -15,7 +15,7 @@ class sqlServer():
     def __init__(self):
         try:
             sqliteConnection = sqlite3.connect('server.db')
-            sqlCursor = sqliteConnection.cursor
+            sqlCursor = sqliteConnection.cursor()
             sqlCursor.execute(self.sqlTable)
 
         except sqlite3.Error as error:
@@ -29,7 +29,7 @@ class sqlServer():
 ######################################
 # Insert into Database
 ######################################
-    def sqlInsert(serverDict):
+    def sqlInsert(self, serverDict):
         sqlInsert = "INSERT OR IGNORE INTO SERVERS("
         sqlInsert += "NAME, DESCRIPTION, IP, INSTALL) VALUES("
         sqlInsert += "'" + serverDict["nameText"] + "', "
@@ -53,8 +53,8 @@ class sqlServer():
 ######################################
 # Delete server entry
 ######################################
-    def sqlDelete(serverID):
-        sqlDelete = "DELETE FROM SERVERS * WHERE ID = " + serverID
+    def sqlDelete(self,serverID):
+        sqlDelete = "DELETE FROM SERVERS * WHERE ID = " + str(serverID)
         try:
             sqliteConnection = sqlite3.connect('server.db')
             sqlCursor = sqliteConnection.cursor
@@ -71,7 +71,7 @@ class sqlServer():
 ######################################
 # Update existing database entry
 ######################################
-    def sqlUpdate(serverDict, serverID):
+    def sqlUpdate(self, serverDict, serverID):
         queryUpdate = "UPDATE SERVERS SET ("
         queryUpdate += "NAME = '"         +serverDict['serverName'] + "', "
         queryUpdate += "DESCRIPTION = '"  +serverDict['serverName'] + "', "
@@ -94,11 +94,11 @@ class sqlServer():
 ######################################
 # Return Database entry at serverID
 ######################################
-    def sqlGetOne(serverID):
-        queryGetOne = "SELECT * FROM SERVERS WHERE ID = " + serverID
+    def sqlGetOne(self, serverID):
+        queryGetOne = "SELECT * FROM SERVERS WHERE ID = " + str(serverID)
         try:
             sqliteConnection = sqlite3.connect('server.db')
-            sqlCursor = sqliteConnection.cursor
+            sqlCursor = sqliteConnection.cursor()
             sqlCursor.execute(queryGetOne)
             returnData = sqlCursor.fetchall()
 
@@ -113,7 +113,7 @@ class sqlServer():
 ######################################
 # Return all databse entries
 ######################################
-    def sqlGetAll():
+    def sqlGetAll(self):
         queryGetOne = "SELECT * FROM SERVERS"
         try:
             sqliteConnection = sqlite3.connect('server.db')
