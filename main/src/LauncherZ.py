@@ -1,8 +1,8 @@
-'''
-Isaac Perks
-2/11/23
-FrontierZ Launcher for MHF through custom Binaries found in README.
-'''
+######################################
+# Isaac Perks
+# 2/14/23
+# Launcher application to pair with IEless binaries
+######################################
 from lpackage import *
 import sys
 

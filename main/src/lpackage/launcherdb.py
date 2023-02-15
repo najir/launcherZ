@@ -1,7 +1,6 @@
-'''
-Database module for launcher. SQLite calls for any neccessary information needed by either
-web or ui modules.
-'''
+######################################
+# Database module for all SQL get/insert/updates/deletes
+######################################
 import sqlite3
 
 class sqlServer():
@@ -27,6 +26,9 @@ class sqlServer():
                 sqliteConnection.close()
                 print('SQLite connection closed')
 
+######################################
+# Insert into Database
+######################################
     def sqlInsert(serverDict):
         sqlInsert = "INSERT OR IGNORE INTO SERVERS("
         sqlInsert += "NAME, DESCRIPTION, IP, INSTALL) VALUES("
@@ -48,6 +50,9 @@ class sqlServer():
                 sqliteConnection.close()
                 print('SQLite connection closed')
 
+######################################
+# Delete server entry
+######################################
     def sqlDelete(serverID):
         sqlDelete = "DELETE FROM SERVERS * WHERE ID = " + serverID
         try:
@@ -63,6 +68,9 @@ class sqlServer():
                 sqliteConnection.close()
                 print('SQLite connection closed')
 
+######################################
+# Update existing database entry
+######################################
     def sqlUpdate(serverDict, serverID):
         queryUpdate = "UPDATE SERVERS SET ("
         queryUpdate += "NAME = '"         +serverDict['serverName'] + "', "
@@ -83,6 +91,9 @@ class sqlServer():
                 sqliteConnection.close()
                 print('SQLite connection closed')
 
+######################################
+# Return Database entry at serverID
+######################################
     def sqlGetOne(serverID):
         queryGetOne = "SELECT * FROM SERVERS WHERE ID = " + serverID
         try:
@@ -99,6 +110,9 @@ class sqlServer():
                 sqliteConnection.close()
                 print('SQLite connection closed')
 
+######################################
+# Return all databse entries
+######################################
     def sqlGetAll():
         queryGetOne = "SELECT * FROM SERVERS"
         try:

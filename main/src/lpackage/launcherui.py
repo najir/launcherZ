@@ -1,8 +1,8 @@
 from ctypes import alignment
 from PySide6.QtCore import QSize, Qt
 from PySide6.QtWidgets import QApplication, QWidget, QMainWindow, QPushButton, QLabel, QVBoxLayout, QListWidget, QListWidgetItem, QLineEdit, QCheckBox, QStackedLayout, QHBoxLayout, QLineEdit, QGridLayout, QSpacerItem, QSizePolicy
-from .launcherdb import *
-from .launcherui import *
+from launcherdb import sqlServer
+from launcherui import webControllerClass
 
 ######################################
 # Default server information
@@ -150,10 +150,16 @@ class widgetPageServer(QWidget):
 class widgetPageMain(QWidget):
     def __init__(self, parent):
         super(widgetPageMain, self).__init__(parent)
-        labelDesc = QLabel("")
-        labelTitle = QLabel("")
-        labelRss = QLabel("")
-        labelInstall = QLabel("")
+        dbServer = sqlServer()
+        serverStruct = dbServer.sqlGetOne("")
+        webController = webControllerClass()
+        labelRss = QLabel(webController.pullRss(serverStruct.serverRss))
+        mainImage = ""
+        bannerImage = ""
+
+        labelDesc = QLabel(serverStruct.serverDescription)
+        labelTitle = QLabel(serverStruct.serverTitle)
+        labelInstall = QLabel(serverStruct.serverInstall)
 
         editUser = QLineEdit("Enter")
         editPass = QLineEdit("Enter")
