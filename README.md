@@ -30,7 +30,8 @@ For example I will be looking to implement;
 	IDE: Visual Studio Community 2022   
 	Language: Python 3.9   
 	Dependencies(Requirements tx will be added):   
-	PySide6   
+	PySide6 
+	python-nmap
 
 
 ### Attributes

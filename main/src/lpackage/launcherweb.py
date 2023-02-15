@@ -1,8 +1,8 @@
 ######################################
 # Web Module for all web requests and interactions
 ######################################
-from urllib.request import *
-from urllib.error import *
+import urllib.request, urllib.error
+import nmap, socket
 
 class webControllerClass():
 
@@ -16,13 +16,18 @@ class webControllerClass():
         return
 
 ######################################
-# Takes URL and returns img at link or null
+# Takes URL and returns img at link
 ######################################
     def pullImage(url):
-        return
+        imgData = urllib.request.urlopen(url).read()
+        return imgData
 
 ######################################
 # Sends a ping to the server and returns T/F
 ######################################
     def serverPing(serverIP):
-        return
+        ipAddress = input(serverIP)
+        scanner = nmap.PortScanner()
+        host = socket.gethostbyname(ipAddress)
+        scanner.host(host, '1', '-v')
+        return scanner[host].state()
