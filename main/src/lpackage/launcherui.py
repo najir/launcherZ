@@ -1,4 +1,4 @@
-from ctypes import alignment
+import sys
 from PySide6.QtCore import QSize, Qt, QDir
 from PySide6.QtGui import QPixmap, QImage, QBrush, QPalette
 from PySide6.QtWidgets import QApplication, QWidget, QMainWindow, QPushButton, QLabel, QVBoxLayout, QListWidget, QStackedWidget, QListWidgetItem, QLineEdit, QCheckBox, QStackedLayout, QHBoxLayout, QLineEdit, QGridLayout, QSpacerItem, QSizePolicy
@@ -15,6 +15,7 @@ class serverList():
         "serverLogo"         : "",
         "ServerBanner"       : "",
         "serverIp"           : "",
+        "serverPort"         : "",
         "serverInstall"      : "",
         "serverRss"          : ""
     }
@@ -25,6 +26,7 @@ class serverList():
             "serverLogo"        : "",
             "ServerBanner"      : "",
             "serverIp"          : "",
+            "serverPort"        : "",
             "serverInstall"     : "",
             "serverRss"         : ""
     }
@@ -35,6 +37,7 @@ class serverList():
             "serverLogo"        : "",
             "ServerBanner"      : "",
             "serverIp"          : "",
+            "serverPort"        : "",
             "serverInstall"     : "",
             "serverRss"         : ""
     }
@@ -45,6 +48,7 @@ class serverList():
             "serverLogo"         : "",
             "ServerBanner"       : "",
             "serverIp"           : "",
+            "serverPort"         : "",
             "serverInstall"      : "",
             "serverRss"          : ""
     }
@@ -55,6 +59,7 @@ class serverList():
             "serverLogo"         : "",
             "ServerBanner"       : "",
             "serverIp"           : "",
+            "serverPort"         : "",
             "serverInstall"      : "",
             "serverRss"          : ""
     }
@@ -76,6 +81,9 @@ class widgetAddServer(QWidget):
         labelServerDesc = QLabel("Server Description:")
         labelServerIP   = QLabel("Server IP:")
         labelServerPort = QLabel("Server Port:")
+        buttonExit      = QPushButton("X")
+
+        buttonExit.setMaximumWidth(20)
         labelServerName.setMinimumWidth(175)
         labelServerDesc.setMinimumWidth(175)
         labelServerIP.setMinimumWidth(175)
@@ -112,6 +120,7 @@ class widgetAddServer(QWidget):
         self.layoutMain = QGridLayout()
         self.layoutMain.addWidget(buttonSaveServer, 0, 5, 1, 1)
         self.layoutMain.addWidget(buttonCancel,     0, 4, 1, 1)
+        self.layoutMain.addWidget(buttonExit,       0, 7, 1, 1)
         self.layoutMain.addLayout(layoutEdit1,      2, 1, 1, 5)
         self.layoutMain.addLayout(layoutEdit2,      3, 1, 1, 5)
         self.layoutMain.addLayout(layoutEdit3,      4, 1, 1, 5)
@@ -123,6 +132,7 @@ class widgetAddServer(QWidget):
 
         buttonSaveServer.clicked.connect(self.parent().on_buttonSaveServer_clicked)
         buttonCancel.clicked.connect(self.parent().on_buttonCancel_clicked)
+        buttonExit.clicked.connect(self.parent().on_buttonExit_clicked)
 
         self.setLayout(self.layoutMain)
 
@@ -137,19 +147,23 @@ class widgetPageServer(QWidget):
         listWidgetServer = QListWidget()
         buttonSettings   = QPushButton("Settings")
         buttonAddServer  = QPushButton("Add Server")
+        buttonExit       = QPushButton("X")
+        buttonExit.setMaximumWidth(20)
 
         buttonSettings.clicked.connect(self.parent().on_buttonSettings_clicked)
         buttonAddServer.clicked.connect(self.parent().on_buttonAddServer_clicked)
+        buttonExit.clicked.connect(self.parent().on_buttonExit_clicked)
 
         verticalSpacer   = QSpacerItem(1, 75, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
         horizontalSpacer = QSpacerItem(50, 0, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
 
         layoutServer = QGridLayout()
-        layoutServer.addItem(verticalSpacer,     1, 0)
-        layoutServer.addItem(horizontalSpacer,   3, 6)
         layoutServer.addWidget(listWidgetServer, 3, 1, 1, 5)
         layoutServer.addWidget(buttonSettings,   0, 5, 1, 1)
         layoutServer.addWidget(buttonAddServer,  0, 4, 1, 1)
+        layoutServer.addWidget(buttonExit,       0, 7, 1, 1)    
+        layoutServer.addItem(verticalSpacer,     1, 0)
+        layoutServer.addItem(horizontalSpacer,   3, 6)
         layoutServer.addItem(verticalSpacer,     4, 0)
         layoutServer.addItem(horizontalSpacer,   3, 0)
 
@@ -226,8 +240,9 @@ class widgetPageMain(QWidget):
 
 
 ######################################
-# Individual Server Pages
-# Still have to figure this page out
+# Settings page
+# Checkbox: Auto load last server joined
+# Checkbox: 
 ######################################
 class widgetPageSetting(QWidget):
     def __init__(self, parent):
@@ -286,14 +301,12 @@ class mainWindow(QMainWindow):
         self.stackedWidget.addWidget(self.serverMenu)
         self.stackedWidget.setCurrentIndex(2)
 
-        bgImage = QImage("img:bg.png")                  #Temp non existing Img, unknown location currently 
+        bgImage = QImage("img:bg.png")
         bgImage.scaled(QSize(1100,600))
         mainPalette = QPalette()
         mainPalette.setBrush(QPalette.Window, QBrush(bgImage))
 
-        #baseWidget = QWidget()
-        #baseWidget.setLayout(self.layoutWindow)
-
+        self.setWindowFlag(Qt.FramelessWindowHint)
         self.setPalette(mainPalette)
         self.setCentralWidget(self.stackedWidget)
 
@@ -318,3 +331,6 @@ class mainWindow(QMainWindow):
         #serverList.serverDict.update({"nameText" : widget.layoutMain.layoutEdit1.lineServerName.text()})
         #serverList.serverDict.update({"descriptionText" : widget.layoutMain.layoutEdit2.lineServerDesc.text()})
         #serverList.serverDict.update({"serverIP" : widget.layoutMain.layoutEdit3.lineServerIP.text()})
+    
+    def on_buttonExit_clicked(self):
+        sys.exit()
