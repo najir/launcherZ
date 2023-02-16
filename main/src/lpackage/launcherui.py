@@ -1,7 +1,7 @@
 from ctypes import alignment
-from PySide6.QtCore import QSize, Qt
-from PySide6.QtGui import QPixmap
-from PySide6.QtWidgets import QApplication, QWidget, QMainWindow, QPushButton, QLabel, QVBoxLayout, QListWidget, QListWidgetItem, QLineEdit, QCheckBox, QStackedLayout, QHBoxLayout, QLineEdit, QGridLayout, QSpacerItem, QSizePolicy
+from PySide6.QtCore import QSize, Qt, QDir
+from PySide6.QtGui import QPixmap, QImage, QBrush, QPalette
+from PySide6.QtWidgets import QApplication, QWidget, QMainWindow, QPushButton, QLabel, QVBoxLayout, QListWidget, QStackedWidget, QListWidgetItem, QLineEdit, QCheckBox, QStackedLayout, QHBoxLayout, QLineEdit, QGridLayout, QSpacerItem, QSizePolicy
 from .launcherdb import sqlServer
 from .launcherweb import webControllerClass
 
@@ -10,53 +10,53 @@ from .launcherweb import webControllerClass
 ######################################
 class serverList():
     serverDict = {
-        "descriptionText" : "",
-        "nameText"        : "",
-        "serverLogo"      : "",
-        "ServerBanner"    : "",
-        "serverIp"        : "",
-        "serverInstall"   : "",
-        "serverRss"       : "",
+        "serverDescription"  : "",
+        "serverTitle"        : "",
+        "serverLogo"         : "",
+        "ServerBanner"       : "",
+        "serverIp"           : "",
+        "serverInstall"      : "",
+        "serverRss"          : ""
     }
     def myServer(self):
         self.serverDict = {
-            "descriptionText" : "",
-            "nameText"        : "",
-            "serverLogo"      : "",
-            "ServerBanner"    : "",
-            "serverIp"        : "",
-            "serverInstall"   : "",
-            "serverRss"       : "",
+            "serverDescription" : "",
+            "serverTitle"       : "",
+            "serverLogo"        : "",
+            "ServerBanner"      : "",
+            "serverIp"          : "",
+            "serverInstall"     : "",
+            "serverRss"         : ""
     }
     def xServer(self):
         self.serverDict = {
-            "descriptionText" : "",
-            "nameText"        : "",
-            "serverLogo"      : "",
-            "ServerBanner"    : "",
-            "serverIp"        : "",
-            "serverInstall"   : "",
-            "serverRss"       : "",
+            "serverDescription" : "",
+            "serverTitle"       : "",
+            "serverLogo"        : "",
+            "ServerBanner"      : "",
+            "serverIp"          : "",
+            "serverInstall"     : "",
+            "serverRss"         : ""
     }
     def yServer(self):
         self.serverDict = {
-            "descriptionText" : "",
-            "nameText"        : "",
-            "serverLogo"      : "",
-            "ServerBanner"    : "",
-            "serverIp"        : "",
-            "serverInstall"   : "",
-            "serverRss"       : "",
+            "serverDescription"  : "",
+            "serverTitle"        : "",
+            "serverLogo"         : "",
+            "ServerBanner"       : "",
+            "serverIp"           : "",
+            "serverInstall"      : "",
+            "serverRss"          : ""
     }
     def zServer(self):
         self.serverDict = {
-            "descriptionText" : "",
-            "nameText"        : "",
-            "serverLogo"      : "",
-            "ServerBanner"    : "",
-            "serverIp"        : "",
-            "serverInstall"   : "",
-            "serverRss"       : "",
+            "serverDescription"  : "",
+            "serverTitle"        : "",
+            "serverLogo"         : "",
+            "ServerBanner"       : "",
+            "serverIp"           : "",
+            "serverInstall"      : "",
+            "serverRss"          : ""
     }
     def serverInit(self):
         # Checks if default server exists in table, creates them if not
@@ -68,49 +68,63 @@ class serverList():
 # Adding addition servers page
 ######################################
 class widgetAddServer(QWidget):
+    layoutMain = None
     def __init__(self, parent):
-        layoutMain = None
         super(widgetAddServer, self).__init__(parent)
 
-        labelServerName = QLabel("Server Name")
-        labelServerDesc = QLabel("Server Description")
-        labelServerIP = QLabel("Server IP")
+        labelServerName = QLabel("Server Name:")
+        labelServerDesc = QLabel("Server Description:")
+        labelServerIP   = QLabel("Server IP:")
+        labelServerPort = QLabel("Server Port:")
+        labelServerName.setMinimumWidth(175)
+        labelServerDesc.setMinimumWidth(175)
+        labelServerIP.setMinimumWidth(175)
+        labelServerPort.setMinimumWidth(175)
 
         buttonSaveServer = QPushButton("Save")
-        buttonCancel = QPushButton("Cancel")
+        buttonCancel     = QPushButton("Cancel")
 
         lineServerName = QLineEdit("")
         lineServerDesc = QLineEdit("")
-        lineServerIP = QLineEdit("")
+        lineServerIP   = QLineEdit("")
+        lineServerPort = QLineEdit("")
 
-        verticalSpacer = QSpacerItem(10, 250, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
+        verticalSpacer   = QSpacerItem(1, 75, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
+        horizontalSpacer = QSpacerItem(50, 0, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
 
-        layoutEdit1 = QVBoxLayout()
+
+        layoutEdit1 = QHBoxLayout()
         layoutEdit1.addWidget(labelServerName)
         layoutEdit1.addWidget(lineServerName)
         
-        layoutEdit2 = QVBoxLayout()
+        layoutEdit2 = QHBoxLayout()
         layoutEdit2.addWidget(labelServerDesc)
         layoutEdit2.addWidget(lineServerDesc)
 
-        layoutEdit3 = QVBoxLayout()
+        layoutEdit3 = QHBoxLayout()
         layoutEdit3.addWidget(labelServerIP)
         layoutEdit3.addWidget(lineServerIP)
 
-        self.layoutMain = QVBoxLayout()
-        self.layoutMain.addItem(verticalSpacer)
-        self.layoutMain.addLayout(layoutEdit1)
-        self.layoutMain.addLayout(layoutEdit2)
-        self.layoutMain.addLayout(layoutEdit3)
-        self.layoutMain.addItem(verticalSpacer)
-        self.layoutMain.addWidget(buttonSaveServer)
-        self.layoutMain.addWidget(buttonCancel)
+        layoutEdit4 = QHBoxLayout()
+        layoutEdit4.addWidget(labelServerPort)
+        layoutEdit4.addWidget(lineServerPort)
+
+        self.layoutMain = QGridLayout()
+        self.layoutMain.addWidget(buttonSaveServer, 0, 5, 1, 1)
+        self.layoutMain.addWidget(buttonCancel,     0, 4, 1, 1)
+        self.layoutMain.addLayout(layoutEdit1,      2, 1, 1, 5)
+        self.layoutMain.addLayout(layoutEdit2,      3, 1, 1, 5)
+        self.layoutMain.addLayout(layoutEdit3,      4, 1, 1, 5)
+        self.layoutMain.addLayout(layoutEdit4,      5, 1, 1, 5)
+        self.layoutMain.addItem(verticalSpacer,     1, 0)
+        self.layoutMain.addItem(horizontalSpacer,   0, 6)
+        self.layoutMain.addItem(horizontalSpacer,   0, 0)
         self.layoutMain.setAlignment(Qt.AlignTop)
 
-        buttonSaveServer.clicked.connect(self.parent().on_buttonSaveServer_clicked(self))
+        buttonSaveServer.clicked.connect(self.parent().on_buttonSaveServer_clicked)
         buttonCancel.clicked.connect(self.parent().on_buttonCancel_clicked)
 
-        self.setLayout(layoutMain)
+        self.setLayout(self.layoutMain)
 
 
 
@@ -120,26 +134,25 @@ class widgetAddServer(QWidget):
 class widgetPageServer(QWidget):
     def __init__(self, parent):
         super(widgetPageServer, self).__init__(parent)
-
-        labelMainText = QLabel("Server List")
         listWidgetServer = QListWidget()
-        buttonSettings = QPushButton("Settings")
-        buttonAddServer = QPushButton("AddServer")
-        buttonJoinServer = QPushButton("Join")
+        buttonSettings   = QPushButton("Settings")
+        buttonAddServer  = QPushButton("Add Server")
 
         buttonSettings.clicked.connect(self.parent().on_buttonSettings_clicked)
         buttonAddServer.clicked.connect(self.parent().on_buttonAddServer_clicked)
-        buttonJoinServer.clicked.connect(self.parent().on_buttonJoinServer_clicked)
 
-        verticalSpacer = QSpacerItem(10, 10, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
+        verticalSpacer   = QSpacerItem(1, 75, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
+        horizontalSpacer = QSpacerItem(50, 0, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
 
         layoutServer = QGridLayout()
-        layoutServer.addWidget(labelMainText,    0, 0, 1, 1, Qt.AlignBottom)
-        layoutServer.addWidget(listWidgetServer, 1, 0, 1, 4)
-        layoutServer.addWidget(buttonJoinServer, 3, 1, 1, 2)
-        layoutServer.addWidget(buttonSettings,   0, 3, 1, 1)
-        layoutServer.addWidget(buttonAddServer,  0, 2, 1, 1)
-        layoutServer.addItem(verticalSpacer,     2, 0)
+        layoutServer.addItem(verticalSpacer,     1, 0)
+        layoutServer.addItem(horizontalSpacer,   3, 6)
+        layoutServer.addWidget(listWidgetServer, 3, 1, 1, 5)
+        layoutServer.addWidget(buttonSettings,   0, 5, 1, 1)
+        layoutServer.addWidget(buttonAddServer,  0, 4, 1, 1)
+        layoutServer.addItem(verticalSpacer,     4, 0)
+        layoutServer.addItem(horizontalSpacer,   3, 0)
+
 
         self.setLayout(layoutServer)
 
@@ -149,41 +162,52 @@ class widgetPageServer(QWidget):
 # Individual Server Pages
 ######################################
 class widgetPageMain(QWidget):
+    defaultDict = {
+        "serverDescription" : "Default",
+        "serverTitle"       : "Default",
+        "serverLogo"        : "Default",
+        "serverBanner"      : "Default",
+        "serverIp"          : "Default",
+        "serverInstall"     : "Default",
+        "serverRss"         : "Default"
+        }
     def __init__(self, parent):
         super(widgetPageMain, self).__init__(parent)
-        dbServer = sqlServer()
-        serverStruct = dbServer.sqlGetOne(0)
-        webController = webControllerClass()
-        labelRss = QLabel(webController.pullRss(serverStruct['serverRss']))
-        logoImage = QLabel()
-        bannerImage = QLabel()
-        bannerImage.setPixmap(QPixmap(webController.pullImage(serverStruct['serverBanner'])))
-        logoImage.setPixmap(QPixmap(webController.pullImage(serverStruct['serverLogo'])))
+        webController   = webControllerClass()
+        dbServer        = sqlServer()
+        #serverDict      = dbServer.sqlGetOne(0)
+        #if not serverDict:
+        serverDict  = self.defaultDict 
+        labelRss        = QLabel() #self.rssWidget()
 
-        labelDesc = QLabel(serverStruct['serverDescription'])
-        labelTitle = QLabel(serverStruct['serverTitle'])
-        labelInstall = QLabel(serverStruct['serverInstall'])
+        logoImage       = QLabel()
+        bannerImage     = QLabel()
+        #bannerImage.setPixmap(QPixmap(webController.pullImage(serverDict['serverBanner'])))
+        #logoImage.setPixmap(QPixmap(webController.pullImage(serverDict['serverLogo'])))
 
-        editUser = QLineEdit("Enter")
-        editPass = QLineEdit("Enter")
-        checkboxUser = QCheckBox("Save Username?")
-        buttonLog = QPushButton("Login")
-        buttonPlay = QPushButton("Start Game")
-
-        buttonBack = QPushButton("Back")
+        labelDesc      = QLabel(serverDict['serverDescription'])
+        labelTitle     = QLabel(serverDict['serverTitle'])
+        labelInstall   = QLabel(serverDict['serverInstall'])
+        buttonBack     = QPushButton("Back")
         buttonSettings = QPushButton("Settings")
 
-        buttonPlay.hide()
         buttonBack.clicked.connect(self.parent().on_buttonBack_clicked)
         buttonSettings.clicked.connect(self.parent().on_buttonSettings_clicked)
 
-        loginLayout = QVBoxLayout()
+        editUser     = QLineEdit("Enter")
+        editPass     = QLineEdit("Enter")
+        checkboxUser = QCheckBox("Save Username?")
+        buttonLog    = QPushButton("Login")
+        buttonPlay   = QPushButton("Start Game")
+        loginLayout  = QVBoxLayout()
+
         loginLayout.addWidget(QLabel("User Name"))
         loginLayout.addWidget(editUser)
         loginLayout.addWidget(QLabel("Password"))
         loginLayout.addWidget(editPass)
         loginLayout.addWidget(checkboxUser)
         loginLayout.addWidget(buttonLog)
+        buttonPlay.hide()
 
         layoutPage = QGridLayout()
         layoutPage.addWidget(labelTitle,     0, 2)
@@ -193,9 +217,12 @@ class widgetPageMain(QWidget):
         layoutPage.addWidget(bannerImage,    2, 0)
         layoutPage.addWidget(buttonSettings, 0, 3)
         layoutPage.addWidget(buttonBack,     0, 0)
+        layoutPage.addWidget(labelInstall,   4, 0)
         layoutPage.addLayout(loginLayout,    3, 0)
-        layoutPage.addlayout(labelInstall,   4, 0)
  
+# Creates the rssWidget based on the web pull. Seperated from init due to complexity
+    def rssWidget(self):
+        return
 
 
 ######################################
@@ -205,8 +232,7 @@ class widgetPageMain(QWidget):
 class widgetPageSetting(QWidget):
     def __init__(self, parent):
         super(widgetPageSetting, parent).__init__(self)
-
-        labelFilePath = ""
+        return
 
 
 
@@ -215,51 +241,80 @@ class widgetPageSetting(QWidget):
 # Main Window for UI
 ######################################
 class mainWindow(QMainWindow):
-    layoutWindow = None
-    mainMenu = None
-    serverMenu = None
+    layoutWindow  = None
+    mainMenu      = None
+    serverMenu    = None
     addServerMenu = None
+
+    ssMain = """
+    QListWidget, QLabel{
+        background-color : rgba(51, 51, 0, 220);
+        border : 1px solid rgb(163, 163, 117);
+    }
+    QPushButton, QLineEdit{
+        background-color : rgb(51, 51, 0);
+        border : 1px solid rgb(163, 163, 117);
+    }
+    QWidget{
+        font : 700 12pt "Segoe Print";
+        color : rgb(159, 190, 223)
+    }
+    """
+    ssLog  = ""
+    ssFeed = ""
+    ssInfo = ""
+
 
     def __init__(self):
         super(mainWindow, self).__init__()
+        QDir.addSearchPath('img', './rsc/img')
 
         self.setWindowTitle("LauncherZ")
         self.setFixedSize(QSize(1100, 600))
 
-        self.mainMenu = widgetPageMain(self)
-        self.serverMenu = widgetPageServer(self)
+        self.mainMenu      = widgetPageMain(self)
+        self.serverMenu    = widgetPageServer(self)
         self.addServerMenu = widgetAddServer(self)
 
-        self.layoutWindow = QStackedLayout()
-        self.layoutWindow.addWidget(self.mainMenu)
-        self.layoutWindow.addWidget(self.addServerMenu)
-        self.layoutWindow.addWidget(self.serverMenu)
-        self.layoutWindow.setCurrentWidget(self.serverMenu)
-        self.serverMenu.show()
+        self.serverMenu.setStyleSheet(self.ssMain)
+        self.addServerMenu.setStyleSheet(self.ssMain)
+        self.mainMenu.setStyleSheet(self.ssMain)
 
-        baseWidget = QWidget()
-        baseWidget.setLayout(self.layoutWindow)
+        self.stackedWidget = QStackedWidget()
+        self.stackedWidget.addWidget(self.mainMenu)
+        self.stackedWidget.addWidget(self.addServerMenu)
+        self.stackedWidget.addWidget(self.serverMenu)
+        self.stackedWidget.setCurrentIndex(2)
 
-        self.setCentralWidget(baseWidget)
+        bgImage = QImage("img:bg.png")                  #Temp non existing Img, unknown location currently 
+        bgImage.scaled(QSize(1100,600))
+        mainPalette = QPalette()
+        mainPalette.setBrush(QPalette.Window, QBrush(bgImage))
+
+        #baseWidget = QWidget()
+        #baseWidget.setLayout(self.layoutWindow)
+
+        self.setPalette(mainPalette)
+        self.setCentralWidget(self.stackedWidget)
 
     def on_buttonSettings_clicked(self):
         #Open up a new window with settings menu so I can reuse this on all pages
         return
 
     def on_buttonAddServer_clicked(self):
-        self.layoutWindow.setCurrentWidget(self.addServerMenu)
+        self.stackedWidget.setCurrentIndex(1)
 
     def on_buttonJoinServer_clicked(self):
-        self.layoutWindow.setCurrentWidget(self.mainMenu)
+        self.stackedWidget.setCurrentIndex(0)
 
     def on_buttonBack_clicked(self):
-        self.layoutWindow.setCurrentWidget(self.mainMenu)
+        self.stackedWidget.setCurrentIndex(2)
     
     def on_buttonCancel_clicked(self):
-        self.layoutWindow.setCurrentWidget(self.serverMenu)
+        self.stackedWidget.setCurrentIndex(2)
 
-    def on_buttonSaveServer_clicked(widget, self):
-        self.layoutWindow.setCurrentWidget(self.serverMenu)
-        serverList.serverDict.update({"nameText" : widget.layoutMain.layoutEdit1.lineServerName.text()})
-        serverList.serverDict.update({"descriptionText" : widget.layoutMain.layoutEdit2.lineServerDesc.text()})
-        serverList.serverDict.update({"serverIP" : widget.layoutMain.layoutEdit3.lineServerIP.text()})
+    def on_buttonSaveServer_clicked(self):
+        self.stackedWidget.setCurrentIndex(2)
+        #serverList.serverDict.update({"nameText" : widget.layoutMain.layoutEdit1.lineServerName.text()})
+        #serverList.serverDict.update({"descriptionText" : widget.layoutMain.layoutEdit2.lineServerDesc.text()})
+        #serverList.serverDict.update({"serverIP" : widget.layoutMain.layoutEdit3.lineServerIP.text()})

@@ -6,10 +6,10 @@ import sqlite3
 class sqlServer():
     sqlTable = """CREATE TABLE IF NOT EXISTS SERVERS(
     ID INTEGER PRIMARY KEY AUTOINCREMENT,
-    NAME            = TEXT,
-    DESCRIPTION     = TEXT,
-    IP              = TEXT,
-    INSTALL         = TEXT);
+    TITLE            TEXT,
+    DESCRIPTION      TEXT,
+    IP               TEXT,
+    INSTALL          TEXT);
     """
 
     def __init__(self):
@@ -53,7 +53,7 @@ class sqlServer():
 ######################################
 # Delete server entry
 ######################################
-    def sqlDelete(self,serverID):
+    def sqlDelete(self, serverID):
         sqlDelete = "DELETE FROM SERVERS * WHERE ID = " + str(serverID)
         try:
             sqliteConnection = sqlite3.connect('server.db')
@@ -73,11 +73,11 @@ class sqlServer():
 ######################################
     def sqlUpdate(self, serverDict, serverID):
         queryUpdate = "UPDATE SERVERS SET ("
-        queryUpdate += "NAME = '"         +serverDict['serverName'] + "', "
-        queryUpdate += "DESCRIPTION = '"  +serverDict['serverName'] + "', "
-        queryUpdate += "IP = '"           +serverDict['serverName'] + "', "
-        queryUpdate += "INSTALL = '"      +serverDict['serverName'] + "');"
-        queryUpdate += "WHERE ID = "      +serverID
+        queryUpdate += "TITLE = '"         +serverDict['serverTitle'] + "', "
+        queryUpdate += "DESCRIPTION = '"   +serverDict['serverDescription'] + "', "
+        queryUpdate += "IP = '"            +serverDict['serverIP'] + "', "
+        queryUpdate += "INSTALL = '"       +serverDict['serverInstall'] + "');"
+        queryUpdate += "WHERE ID = "       +serverID
         try:
             sqliteConnection = sqlite3.connect('server.db')
             sqlCursor = sqliteConnection.cursor
@@ -95,6 +95,7 @@ class sqlServer():
 # Return Database entry at serverID
 ######################################
     def sqlGetOne(self, serverID):
+        returnData = None
         queryGetOne = "SELECT * FROM SERVERS WHERE ID = " + str(serverID)
         try:
             sqliteConnection = sqlite3.connect('server.db')
@@ -110,10 +111,13 @@ class sqlServer():
                 sqliteConnection.close()
                 print('SQLite connection closed')
 
+        return returnData
+
 ######################################
 # Return all databse entries
 ######################################
     def sqlGetAll(self):
+        returnData = None
         queryGetOne = "SELECT * FROM SERVERS"
         try:
             sqliteConnection = sqlite3.connect('server.db')
@@ -128,3 +132,5 @@ class sqlServer():
             if sqliteConnection:
                 sqliteConnection.close()
                 print('SQLite connection closed')
+
+        return returnData

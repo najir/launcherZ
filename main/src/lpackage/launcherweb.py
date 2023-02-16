@@ -13,13 +13,13 @@ class webControllerClass():
 # Takes the URL given and returns null or data from the RSS Feed
 # A dict of dicts contains up to the last 3 posts in feed
 ######################################
-    def pullRss(url):
+    def pullRss(self, url):
+        int = 0
         urlData = urllib.request.Request(url)
         parse = BeautifulSoup(urlData.content, 'xml')
         xmlData = parse.find_all('entry', limit=3)
-        int = 0
-
         rssDict = {}
+
         for entry in xmlData:
             rssDict[int] = {
                 "NAME" : entry.title.text,
@@ -34,14 +34,14 @@ class webControllerClass():
 ######################################
 # Takes URL and returns img at link
 ######################################
-    def pullImage(url):
+    def pullImage(self, url):
         imgData = urllib.request.urlopen(url).read()
         return imgData
 
 ######################################
 # Sends a ping to the server and returns T/F
 ######################################
-    def serverPing(serverIP):
+    def serverPing(self, serverIP):
         returnBool = 0
         ipAddress = input(serverIP)
         scanner = nmap.PortScanner()
