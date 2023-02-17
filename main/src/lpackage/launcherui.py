@@ -72,10 +72,9 @@ class serverList():
 ######################################
 # Adding addition servers page
 ######################################
-class widgetAddServer(QWidget):
-    layoutMain = None
+class widgetPageServer(QWidget):
     def __init__(self, parent):
-        super(widgetAddServer, self).__init__(parent)
+        super(widgetPageServer, self).__init__(parent)
 
         labelServerName = QLabel("Server Name:")
         labelServerDesc = QLabel("Server Description:")
@@ -117,33 +116,33 @@ class widgetAddServer(QWidget):
         layoutEdit4.addWidget(labelServerPort)
         layoutEdit4.addWidget(lineServerPort)
 
-        self.layoutMain = QGridLayout()
-        self.layoutMain.addWidget(buttonSaveServer, 0, 5, 1, 1)
-        self.layoutMain.addWidget(buttonCancel,     0, 4, 1, 1)
-        self.layoutMain.addWidget(buttonExit,       0, 7, 1, 1)
-        self.layoutMain.addLayout(layoutEdit1,      2, 1, 1, 5)
-        self.layoutMain.addLayout(layoutEdit2,      3, 1, 1, 5)
-        self.layoutMain.addLayout(layoutEdit3,      4, 1, 1, 5)
-        self.layoutMain.addLayout(layoutEdit4,      5, 1, 1, 5)
-        self.layoutMain.addItem(verticalSpacer,     1, 0)
-        self.layoutMain.addItem(horizontalSpacer,   0, 6)
-        self.layoutMain.addItem(horizontalSpacer,   0, 0)
-        self.layoutMain.setAlignment(Qt.AlignTop)
+        layoutMain = QGridLayout()
+        layoutMain.addWidget(buttonSaveServer, 0, 5, 1, 1)
+        layoutMain.addWidget(buttonCancel,     0, 4, 1, 1)
+        layoutMain.addWidget(buttonExit,       0, 7, 1, 1)
+        layoutMain.addLayout(layoutEdit1,      2, 1, 1, 5)
+        layoutMain.addLayout(layoutEdit2,      3, 1, 1, 5)
+        layoutMain.addLayout(layoutEdit3,      4, 1, 1, 5)
+        layoutMain.addLayout(layoutEdit4,      5, 1, 1, 5)
+        layoutMain.addItem(verticalSpacer,     1, 0)
+        layoutMain.addItem(horizontalSpacer,   0, 6)
+        layoutMain.addItem(horizontalSpacer,   0, 0)
+        layoutMain.setAlignment(Qt.AlignTop)
 
         buttonSaveServer.clicked.connect(self.parent().on_buttonSaveServer_clicked)
         buttonCancel.clicked.connect(self.parent().on_buttonCancel_clicked)
         buttonExit.clicked.connect(self.parent().on_buttonExit_clicked)
 
-        self.setLayout(self.layoutMain)
+        self.setLayout(layoutMain)
 
 
 
 ######################################
 # Server List Page
 ######################################
-class widgetPageServer(QWidget):
+class widgetPageList(QWidget):
     def __init__(self, parent):
-        super(widgetPageServer, self).__init__(parent)
+        super(widgetPageList, self).__init__(parent)
         listWidgetServer = QListWidget()
         buttonSettings   = QPushButton("Settings")
         buttonAddServer  = QPushButton("Add Server")
@@ -249,9 +248,56 @@ class widgetPageMain(QWidget):
 ######################################
 class widgetPageSetting(QWidget):
     def __init__(self, parent):
-        super(widgetPageSetting, parent).__init__(self)
-        return
+        super(widgetPageSetting, self).__init__(parent)
+        buttonBack = QPushButton("Back")
+        buttonSave = QPushButton("Save")
+        buttonClear = QPushButton("Clear Data?")
+        buttonExit = QPushButton("X")
+        labelSkip  = QLabel("Skip Server List?")
+        labelUser  = QLabel("Save Username?")
+        checkSkip  = QCheckBox()
+        checkUser  = QCheckBox()
 
+        buttonExit.setFixedWidth(20)
+        checkSkip.setStyleSheet("border: none")
+        checkUser.setStyleSheet("border: none")
+        labelSkip.setFixedWidth(150)
+        labelUser.setFixedWidth(150)
+        buttonClear.setFixedWidth(150)
+
+
+        layoutEdit1 = QHBoxLayout()
+        layoutEdit1.addWidget(labelSkip)
+        layoutEdit1.addWidget(checkSkip)
+
+        layoutEdit2 = QHBoxLayout()
+        layoutEdit2.addWidget(labelUser)
+        layoutEdit2.addWidget(checkUser)
+
+        layoutEdit1 = QHBoxLayout()
+        layoutEdit1.addWidget(labelSkip)
+        layoutEdit1.addWidget(checkSkip)
+
+        verticalSpacer   = QSpacerItem(1, 75, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
+        horizontalSpacer = QSpacerItem(50, 0, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
+
+        layoutMain = QGridLayout()
+        layoutMain.addWidget(buttonSave,       0, 5, 1, 1)
+        layoutMain.addWidget(buttonBack,       0, 4, 1, 1)
+        layoutMain.addWidget(buttonExit,       0, 7, 1, 1)
+        layoutMain.addWidget(buttonClear,      4, 1, 1, 1)
+        layoutMain.addLayout(layoutEdit1,      2, 1, 1, 5)
+        layoutMain.addLayout(layoutEdit2,      3, 1, 1, 5)
+        layoutMain.addItem(verticalSpacer,     1, 0)
+        layoutMain.addItem(horizontalSpacer,   0, 6)
+        layoutMain.addItem(horizontalSpacer,   0, 0)
+        layoutMain.setAlignment(Qt.AlignTop)
+
+        buttonExit.clicked.connect(self.parent().on_buttonExit_clicked)
+        buttonBack.clicked.connect(self.parent().on_buttonBack_clicked)
+        buttonClear.clicked.connect(self.parent().on_buttonClear_clicked)
+        
+        self.setLayout(layoutMain)
 
 
 
@@ -260,16 +306,23 @@ class widgetPageSetting(QWidget):
 ######################################
 class mainWindow(QMainWindow):
     layoutWindow  = None
-    mainMenu      = None
-    serverMenu    = None
-    addServerMenu = None
+    pageMain      = None
+    pageList      = None
+    pageServer    = None
+    pageSetting   = None
+    pageIndex     = 0
 
     ssMain = """
     QListWidget, QLabel{
         background-color : rgba(51, 51, 0, 220);
         border : 1px solid rgb(163, 163, 117);
     }
-    QPushButton, QLineEdit{
+    QPushButton{
+        background-color : rgb(51, 51, 0);
+        border-image: url(./rsc/img/button.png) 0 0 0 0 stretch stretch;
+        border : None
+    }
+    QLineEdit{
         background-color : rgb(51, 51, 0);
         border : 1px solid rgb(163, 163, 117);
     }
@@ -290,18 +343,22 @@ class mainWindow(QMainWindow):
         self.setWindowTitle("LauncherZ")
         self.setFixedSize(QSize(1100, 600))
 
-        self.mainMenu      = widgetPageMain(self)
-        self.serverMenu    = widgetPageServer(self)
-        self.addServerMenu = widgetAddServer(self)
+        self.pageMain    = widgetPageMain(self)
+        self.pageList    = widgetPageList(self)
+        self.pageServer  = widgetPageServer(self)
+        self.pageSetting = widgetPageSetting(self)
 
-        self.serverMenu.setStyleSheet(self.ssMain)
-        self.addServerMenu.setStyleSheet(self.ssMain)
-        self.mainMenu.setStyleSheet(self.ssMain)
+
+        self.pageList.setStyleSheet(self.ssMain)
+        self.pageServer.setStyleSheet(self.ssMain)
+        self.pageMain.setStyleSheet(self.ssMain)
+        self.pageSetting.setStyleSheet(self.ssMain)
 
         self.stackedWidget = QStackedWidget()
-        self.stackedWidget.addWidget(self.mainMenu)
-        self.stackedWidget.addWidget(self.addServerMenu)
-        self.stackedWidget.addWidget(self.serverMenu)
+        self.stackedWidget.addWidget(self.pageMain)
+        self.stackedWidget.addWidget(self.pageServer)
+        self.stackedWidget.addWidget(self.pageList)
+        self.stackedWidget.addWidget(self.pageSetting)
         self.stackedWidget.setCurrentIndex(2)
 
         bgImage = QImage("img:bg.png")
@@ -315,14 +372,10 @@ class mainWindow(QMainWindow):
         self.setStyleSheet("border: 3px solid rgb(0, 51, 51);")
 
     def on_buttonSettings_clicked(self):
-        #Open up a new window with settings menu so I can reuse this on all pages
-        return
+        self.stackedWidget.setCurrentIndex(3)
 
     def on_buttonAddServer_clicked(self):
         self.stackedWidget.setCurrentIndex(1)
-
-    def on_buttonJoinServer_clicked(self):
-        self.stackedWidget.setCurrentIndex(0)
 
     def on_buttonBack_clicked(self):
         self.stackedWidget.setCurrentIndex(2)
@@ -346,3 +399,6 @@ class mainWindow(QMainWindow):
         delta = QPoint(event.globalPos() - self.anchor)
         self.move(self.x() + delta.x(), self.y() + delta.y())
         self.anchor = event.globalPos()
+
+    def on_buttonClear_clicked(self):
+        return
