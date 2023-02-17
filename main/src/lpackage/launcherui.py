@@ -1,5 +1,5 @@
 import sys
-from PySide6.QtCore import QSize, Qt, QDir
+from PySide6.QtCore import QSize, Qt, QDir, QPoint
 from PySide6.QtGui import QPixmap, QImage, QBrush, QPalette
 from PySide6.QtWidgets import QApplication, QWidget, QMainWindow, QPushButton, QLabel, QVBoxLayout, QListWidget, QStackedWidget, QListWidgetItem, QLineEdit, QCheckBox, QStackedLayout, QHBoxLayout, QLineEdit, QGridLayout, QSpacerItem, QSizePolicy
 from .launcherdb import sqlServer
@@ -148,7 +148,7 @@ class widgetPageServer(QWidget):
         buttonSettings   = QPushButton("Settings")
         buttonAddServer  = QPushButton("Add Server")
         buttonExit       = QPushButton("X")
-        buttonExit.setMaximumWidth(20)
+        buttonExit.setFixedWidth(20)
 
         buttonSettings.clicked.connect(self.parent().on_buttonSettings_clicked)
         buttonAddServer.clicked.connect(self.parent().on_buttonAddServer_clicked)
@@ -157,15 +157,18 @@ class widgetPageServer(QWidget):
         verticalSpacer   = QSpacerItem(1, 75, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
         horizontalSpacer = QSpacerItem(50, 0, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
 
+        labelVersion = QLabel("Version 0.1.0")
+
         layoutServer = QGridLayout()
         layoutServer.addWidget(listWidgetServer, 3, 1, 1, 5)
-        layoutServer.addWidget(buttonSettings,   0, 5, 1, 1)
-        layoutServer.addWidget(buttonAddServer,  0, 4, 1, 1)
-        layoutServer.addWidget(buttonExit,       0, 7, 1, 1)    
-        layoutServer.addItem(verticalSpacer,     1, 0)
-        layoutServer.addItem(horizontalSpacer,   3, 6)
-        layoutServer.addItem(verticalSpacer,     4, 0)
-        layoutServer.addItem(horizontalSpacer,   3, 0)
+        layoutServer.addWidget(labelVersion,     6, 1, 1, 1)
+        layoutServer.addWidget(buttonSettings,   1, 5, 1, 1)
+        layoutServer.addWidget(buttonAddServer,  1, 4, 1, 1)
+        layoutServer.addWidget(buttonExit,       1, 7, 1, 1)    
+        layoutServer.addItem(verticalSpacer,     2, 0)
+        layoutServer.addItem(horizontalSpacer,   4, 6)
+        layoutServer.addItem(verticalSpacer,     5, 0)
+        layoutServer.addItem(horizontalSpacer,   4, 0)
 
 
         self.setLayout(layoutServer)
@@ -309,6 +312,7 @@ class mainWindow(QMainWindow):
         self.setWindowFlag(Qt.FramelessWindowHint)
         self.setPalette(mainPalette)
         self.setCentralWidget(self.stackedWidget)
+        self.setStyleSheet("border: 3px solid rgb(0, 51, 51);")
 
     def on_buttonSettings_clicked(self):
         #Open up a new window with settings menu so I can reuse this on all pages
@@ -334,3 +338,11 @@ class mainWindow(QMainWindow):
     
     def on_buttonExit_clicked(self):
         sys.exit()
+
+    def mousePressEvent(self, event):
+        self.anchor = event.globalPos()
+
+    def mouseMoveEvent(self, event):
+        delta = QPoint(event.globalPos() - self.anchor)
+        self.move(self.x() + delta.x(), self.y() + delta.y())
+        self.anchor = event.globalPos()
