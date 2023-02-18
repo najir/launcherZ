@@ -6,10 +6,14 @@ import sqlite3
 class sqlServer():
     sqlTable = """CREATE TABLE IF NOT EXISTS SERVERS(
     ID INTEGER PRIMARY KEY AUTOINCREMENT,
-    TITLE            TEXT,
+    TITLE            TEXT NOT NULL,
     DESCRIPTION      TEXT,
-    IP               TEXT,
-    INSTALL          TEXT);
+    IP               TEXT NOT NULL,
+    PORT             TEXT NOT NULL,
+    INSTALL          TEXT NOT NULL,
+    LOGO             TEXT
+    BANNER           TEXT
+    RSS              TEXT);
     """
 
     def __init__(self):
