@@ -247,19 +247,17 @@ class widgetPageMain(QWidget):
         }
     def __init__(self, parent):
         super(widgetPageMain, self).__init__(parent)
-        #serverDict      = dbServer.sqlGetOne(0)
-        #if not serverDict:
-        serverDict  = self.defaultDict 
-        labelRss        = QLabel() #self.rssWidget()
 
+        serverDict      = self.serverGet()
+        labelRss        = self.rssWidget()
         logoImage       = QLabel()
         bannerImage     = QLabel()
-        #bannerImage.setPixmap(QPixmap(webController.pullImage(serverDict['serverBanner'])))
-        #logoImage.setPixmap(QPixmap(webController.pullImage(serverDict['serverLogo'])))
+        bannerImage.setPixmap(QPixmap(self.parent().webController.pullImage(serverDict['BANNER'])))
+        logoImage.setPixmap(QPixmap(self.parent().webController.pullImage(serverDict['LOGO'])))
 
-        labelDesc      = QLabel(serverDict['serverDescription'])
-        labelTitle     = QLabel(serverDict['serverTitle'])
-        labelInstall   = QLabel(serverDict['serverInstall'])
+        labelDesc      = QLabel(serverDict['DESCRIPTION'])
+        labelTitle     = QLabel(serverDict['NAME'])
+        labelInstall   = QLabel(serverDict['INSTALL'])
         buttonBack     = QPushButton("Back")
         buttonSettings = QPushButton("Settings")
 
@@ -292,9 +290,23 @@ class widgetPageMain(QWidget):
         layoutPage.addWidget(labelInstall,   4, 0)
         layoutPage.addLayout(loginLayout,    3, 0)
  
-# Creates the rssWidget based on the web pull. Seperated from init due to complexity
     def rssWidget(self):
         return
+
+    def serverGet(self):
+        dbData = self.parent().dbServer.sqlGetOne(0)
+        row = dbData[0]
+        dataDict = {
+                'ID'          :row[0],
+                'TITLE'       :row[1],
+                'DESCRIPTION' :row[2],
+                'IP'          :row[3],
+                'PORT'        :row[4],
+                'INSTALL'     :row[5],
+                'LOGO'        :row[6],
+                'BANNER'      :row[7],
+                'RSS'         :row[8]}
+        return dataDict
 
 
 ######################################
