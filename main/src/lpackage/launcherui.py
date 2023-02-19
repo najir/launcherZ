@@ -177,7 +177,7 @@ class widgetPageServer(QWidget):
 class widgetPageList(QWidget):
     def __init__(self, parent):
         super(widgetPageList, self).__init__(parent)
-        listWidgetServer = self.parent().listUpdate()
+        listWidgetServer = self.listUpdate()
         buttonSettings   = QPushButton("Settings")
         buttonAddServer  = QPushButton("Add Server")
         buttonExit       = QPushButton("X")
@@ -203,16 +203,11 @@ class widgetPageList(QWidget):
         layoutServer.addItem(verticalSpacer,     5, 0)
         layoutServer.addItem(horizontalSpacer,   4, 0)
 
-
         self.setLayout(layoutServer)
 
     def listUpdate(self):
-        # Rows 0 - x of data row[0] = iddata
-        # id: row[0] etc.... from fetchall
-        # Call list view from self and item delegate a widget for each loop of the data variable.
-
         dataDict = {}
-        dbData = self.dbServer.sqlGetAll
+        dbData = self.parent().dbServer.sqlGetAll()
         returnList = QListWidget()
         for row in dbData:
             dataDict.update({
@@ -233,18 +228,8 @@ class widgetPageList(QWidget):
 
             returnList.setItemWidget(item, dbItem)
                 
-        return returnList
-    """
-            "serverTitle"        : "",
-            "serverDescription"  : "",
-            "serverIp"           : "",
-            "serverPort"         : "",
-            "serverInstall"      : "",
-            "serverLogo"         : "",
-            "ServerBanner"       : "",
-            "serverRss"          : ""
-    """
-    
+        return returnList 
+
 
 
 ######################################

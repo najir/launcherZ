@@ -43,7 +43,7 @@ class sqlServer():
 
         try:
             sqliteConnection = sqlite3.connect('server.db')
-            sqlCursor = sqliteConnection.cursor
+            sqlCursor = sqliteConnection.cursor()
             sqlCursor.execute(sqlInsert)
 
         except sqlite3.Error as error:
@@ -61,7 +61,7 @@ class sqlServer():
         sqlDelete = "DELETE FROM SERVERS * WHERE ID = " + str(serverID)
         try:
             sqliteConnection = sqlite3.connect('server.db')
-            sqlCursor = sqliteConnection.cursor
+            sqlCursor = sqliteConnection.cursor()
             sqlCursor.execute(sqlDelete)
 
         except sqlite3.Error as error:
@@ -84,7 +84,7 @@ class sqlServer():
         queryUpdate += "WHERE ID = "       +serverID
         try:
             sqliteConnection = sqlite3.connect('server.db')
-            sqlCursor = sqliteConnection.cursor
+            sqlCursor = sqliteConnection.cursor()
             sqlCursor.execute(queryUpdate)
 
         except sqlite3.Error as error:
@@ -125,7 +125,7 @@ class sqlServer():
         queryGetOne = "SELECT * FROM SERVERS"
         try:
             sqliteConnection = sqlite3.connect('server.db')
-            sqlCursor = sqliteConnection.cursor
+            sqlCursor = sqliteConnection.cursor()
             sqlCursor.execute(queryGetOne)
             returnData = sqlCursor.fetchall()
 
