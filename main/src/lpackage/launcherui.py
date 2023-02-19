@@ -78,6 +78,28 @@ class widgetServerItem(QListWidgetItem):
     def __init__(self,parent):
         super(widgetServerItem, self).__init__(parent)
 
+        imageLogo = QImage()
+        imagePing = QImage()
+        imageLogo.scale()
+        imagePing.scale()
+
+        brushLogo = QBrush(imageLogo)
+        brushPing = QBrush(imagePing)
+        labelLogo = QLabel()
+        labelPing = QLabel()
+        labelLogo.setBackground(brushLogo)
+        labelPing.setBackground(brushPing)
+
+        labelName        = QLabel()
+        labelDescription = QLabel()
+
+        itemLayout = QHBoxLayout()
+        itemLayout.addWidget(labelName)
+        itemLayout.addWidget(labelDescription)
+
+        self.setLayout(itemLayout)
+
+
 
 
 
@@ -418,6 +440,8 @@ class mainWindow(QMainWindow):
     def listUpdate(self):
         # Rows 0 - x of data row[0] = iddata
         # id: row[0] etc.... from fetchall
+        # Call list view from self and item delegate a widget for each loop of the data variable.
+
         dataDict = {}
         dbData = self.dbServer.sqlGetAll()
         for row in dbData:
