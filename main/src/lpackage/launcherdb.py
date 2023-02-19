@@ -35,11 +35,15 @@ class sqlServer():
 ######################################
     def sqlInsert(self, serverDict):
         sqlInsert = "INSERT OR IGNORE INTO SERVERS("
-        sqlInsert += "NAME, DESCRIPTION, IP, INSTALL) VALUES("
-        sqlInsert += "'" + serverDict["nameText"] + "', "
-        sqlInsert += "'" + serverDict["descriptionText"] + "', "
+        sqlInsert += "NAME, DESCRIPTION, IP, PORT, INSTALL, LOGO, BANNER, RSS) VALUES("
+        sqlInsert += "'" + serverDict["serverTitle"] + "', "
+        sqlInsert += "'" + serverDict["serverDescription"] + "', "
         sqlInsert += "'" + serverDict["serverIP"] + "', "
+        sqlInsert += "'" + serverDict["serverPort"] + "', "
         sqlInsert += "'" + serverDict["serverInstall"] + "');"
+        sqlInsert += "'" + serverDict["serverLogo"] + "', "
+        sqlInsert += "'" + serverDict["serverBanner"] + "', "
+        sqlInsert += "'" + serverDict["serverRss"] + "', "
 
         try:
             sqliteConnection = sqlite3.connect('server.db')

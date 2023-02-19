@@ -12,11 +12,11 @@ from .launcherweb import webControllerClass
 ######################################
 class serverList():
     serverDict = {
-        "serverTitle"        : "",
-        "serverDescription"  : "",
-        "serverIp"           : "",
-        "serverPort"         : "",
-        "serverInstall"      : "",
+        "serverTitle"        : "LimitZ",
+        "serverDescription"  : "My personal server hosted on amazon web services",
+        "serverIp"           : "111.111.111.111",
+        "serverPort"         : "11111",
+        "serverInstall"      : "example link",
         "serverLogo"         : "",
         "ServerBanner"       : "",
         "serverRss"          : ""
@@ -67,7 +67,19 @@ class serverList():
     }
     def serverInit(self):
         # Checks if default server exists in table, creates them if not
-        return
+        boolExists = self.parent().dbServer.sqlGetOne(0)
+        if not boolExists:
+            self.myServer()
+            self.parent().dbServer.sqlInsert(self.serverDict)
+
+            self.xServer
+            self.parent().dbServer.sqlInsert(self.serverDict)
+
+            self.yServer()
+            self.parent().dbServer.sqlInsert(self.serverDict)
+
+            self.zServer()
+            self.parent().dbServer.sqlInsert(self.serverDict)
 
 
 
@@ -182,6 +194,7 @@ class widgetPageList(QWidget):
         buttonAddServer  = QPushButton("Add Server")
         buttonExit       = QPushButton("X")
         buttonExit.setFixedWidth(20)
+        listWidgetServer.setStyleSheet('background-image: ./rsc/img/list.png;')
 
         buttonSettings.clicked.connect(self.parent().on_buttonSettings_clicked)
         buttonAddServer.clicked.connect(self.parent().on_buttonAddServer_clicked)
@@ -375,6 +388,7 @@ class widgetPageSetting(QWidget):
 class mainWindow(QMainWindow):
     webController = webControllerClass()
     dbServer      = sqlServer()
+    dbServers     = serverList()
     layoutWindow  = None
     pageMain      = None
     pageList      = None
