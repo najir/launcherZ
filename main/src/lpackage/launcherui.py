@@ -75,7 +75,7 @@ class serverList():
 # Test widget for custom list item object
 ######################################
 class widgetServerItem(QListWidgetItem):
-    def __init__(self,parent):
+    def __init__(self, parent, dbData):
         super(widgetServerItem, self).__init__(parent)
 
         imageLogo = QImage()
@@ -177,7 +177,7 @@ class widgetPageServer(QWidget):
 class widgetPageList(QWidget):
     def __init__(self, parent):
         super(widgetPageList, self).__init__(parent)
-        listWidgetServer = QListWidget()
+        listWidgetServer = self.parent().listUpdate()
         buttonSettings   = QPushButton("Settings")
         buttonAddServer  = QPushButton("Add Server")
         buttonExit       = QPushButton("X")
@@ -206,6 +206,45 @@ class widgetPageList(QWidget):
 
         self.setLayout(layoutServer)
 
+    def listUpdate(self):
+        # Rows 0 - x of data row[0] = iddata
+        # id: row[0] etc.... from fetchall
+        # Call list view from self and item delegate a widget for each loop of the data variable.
+
+        dataDict = {}
+        dbData = self.dbServer.sqlGetAll
+        returnList = QListWidget()
+        for row in dbData:
+            dataDict.update({
+                'ID'          :row[0],
+                'TITLE'       :row[1],
+                'DESCRIPTION' :row[2],
+                'IP'          :row[3],
+                'PORT'        :row[4],
+                'INSTALL'     :row[5],
+                'LOGO'        :row[6],
+                'BANNER'      :row[7],
+                'RSS'         :row[8]})
+            item = QListWidgetItem()
+            returnList.addItem(item)
+
+            dbItem = widgetServerItem(dbData)
+            item.setSizeHint(dbItem.minimumSizeHint)
+
+            returnList.setItemWidget(item, dbItem)
+                
+        return returnList
+    """
+            "serverTitle"        : "",
+            "serverDescription"  : "",
+            "serverIp"           : "",
+            "serverPort"         : "",
+            "serverInstall"      : "",
+            "serverLogo"         : "",
+            "ServerBanner"       : "",
+            "serverRss"          : ""
+    """
+    
 
 
 ######################################
@@ -437,37 +476,6 @@ class mainWindow(QMainWindow):
     def on_buttonClear_clicked(self):
         return
 
-    def listUpdate(self):
-        # Rows 0 - x of data row[0] = iddata
-        # id: row[0] etc.... from fetchall
-        # Call list view from self and item delegate a widget for each loop of the data variable.
-
-        dataDict = {}
-        dbData = self.dbServer.sqlGetAll()
-        for row in dbData:
-            dataDict.update({
-                'ID'          :row[0],
-                'TITLE'       :row[1],
-                'DESCRIPTION' :row[2],
-                'IP'          :row[3],
-                'PORT'        :row[4],
-                'INSTALL'     :row[5],
-                'LOGO'        :row[6],
-                'BANNER'      :row[7],
-                'RSS'         :row[8]})
-                
-        return
-    """
-            "serverTitle"        : "",
-            "serverDescription"  : "",
-            "serverIp"           : "",
-            "serverPort"         : "",
-            "serverInstall"      : "",
-            "serverLogo"         : "",
-            "ServerBanner"       : "",
-            "serverRss"          : ""
-    """
-    
     def rssGen(self):
         # Create widgets for each page and vertical layout to return
         return
