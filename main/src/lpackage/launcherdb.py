@@ -35,10 +35,10 @@ class sqlServer():
 ######################################
     def sqlInsert(self, serverDict):
         sqlInsert = "INSERT OR IGNORE INTO SERVERS("
-        sqlInsert += "NAME, DESCRIPTION, IP, PORT, INSTALL, LOGO, BANNER, RSS) VALUES("
+        sqlInsert += "TITLE, DESCRIPTION, IP, PORT, INSTALL, LOGO, BANNER, RSS) VALUES("
         sqlInsert += "'" + serverDict["serverTitle"] + "', "
         sqlInsert += "'" + serverDict["serverDescription"] + "', "
-        sqlInsert += "'" + serverDict["serverIP"] + "', "
+        sqlInsert += "'" + serverDict["serverIp"] + "', "
         sqlInsert += "'" + serverDict["serverPort"] + "', "
         sqlInsert += "'" + serverDict["serverInstall"] + "');"
         sqlInsert += "'" + serverDict["serverLogo"] + "', "

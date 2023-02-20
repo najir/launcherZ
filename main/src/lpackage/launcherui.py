@@ -12,24 +12,40 @@ from .launcherweb import webControllerClass
 ######################################
 class serverList():
     serverDict = {
-        "serverTitle"        : "LimitZ",
-        "serverDescription"  : "My personal server hosted on amazon web services",
-        "serverIp"           : "111.111.111.111",
-        "serverPort"         : "11111",
-        "serverInstall"      : "example link",
+        "serverTitle"        : "",
+        "serverDescription"  : "",
+        "serverIp"           : "",
+        "serverPort"         : "",
+        "serverInstall"      : "",
         "serverLogo"         : "",
-        "ServerBanner"       : "",
+        "serverBanner"       : "",
         "serverRss"          : ""
     }
+
+    def __init__(self, parent):
+        boolExists = parent.dbServer.sqlGetOne(0)
+        if not boolExists:
+            self.myServer()
+            parent.dbServer.sqlInsert(self.serverDict)
+
+            self.xServer
+            parent.dbServer.sqlInsert(self.serverDict)
+
+            self.yServer()
+            parent.dbServer.sqlInsert(self.serverDict)
+
+            self.zServer()
+            parent.dbServer.sqlInsert(self.serverDict)
+
     def myServer(self):
         self.serverDict = {
-            "serverTitle"        : "",
-            "serverDescription"  : "",
-            "serverIp"           : "",
-            "serverPort"         : "",
-            "serverInstall"      : "",
+            "serverTitle"        : "LimitZ",
+            "serverDescription"  : "My personal server hosted on amazon web services",
+            "serverIp"           : "111.111.111.111",
+            "serverPort"         : "11111",
+            "serverInstall"      : "example link",
             "serverLogo"         : "",
-            "ServerBanner"       : "",
+            "serverBanner"       : "",
             "serverRss"          : ""
     }
     def xServer(self):
@@ -40,7 +56,7 @@ class serverList():
             "serverPort"         : "",
             "serverInstall"      : "",
             "serverLogo"         : "",
-            "ServerBanner"       : "",
+            "serverBanner"       : "",
             "serverRss"          : ""
     }
     def yServer(self):
@@ -51,7 +67,7 @@ class serverList():
             "serverPort"         : "",
             "serverInstall"      : "",
             "serverLogo"         : "",
-            "ServerBanner"       : "",
+            "serverBanner"       : "",
             "serverRss"          : ""
     }
     def zServer(self):
@@ -62,24 +78,9 @@ class serverList():
             "serverPort"         : "",
             "serverInstall"      : "",
             "serverLogo"         : "",
-            "ServerBanner"       : "",
+            "serverBanner"       : "",
             "serverRss"          : ""
     }
-    def serverInit(self):
-        # Checks if default server exists in table, creates them if not
-        boolExists = self.parent().dbServer.sqlGetOne(0)
-        if not boolExists:
-            self.myServer()
-            self.parent().dbServer.sqlInsert(self.serverDict)
-
-            self.xServer
-            self.parent().dbServer.sqlInsert(self.serverDict)
-
-            self.yServer()
-            self.parent().dbServer.sqlInsert(self.serverDict)
-
-            self.zServer()
-            self.parent().dbServer.sqlInsert(self.serverDict)
 
 
 
@@ -87,6 +88,7 @@ class serverList():
 # Test widget for custom list item object
 ######################################
 class widgetServerItem(QListWidgetItem):
+    serverID = None
     def __init__(self, parent, dbData):
         super(widgetServerItem, self).__init__(parent)
 
@@ -102,6 +104,7 @@ class widgetServerItem(QListWidgetItem):
         labelLogo.setBackground(brushLogo)
         labelPing.setBackground(brushPing)
 
+        self.serverID    = dbData['ID']
         labelName        = QLabel()
         labelDescription = QLabel()
 
@@ -196,6 +199,7 @@ class widgetPageList(QWidget):
         buttonExit.setFixedWidth(20)
         listWidgetServer.setStyleSheet('background-image: ./rsc/img/list.png;')
 
+        listWidgetServer.itemDoubleClicked.connect(self.parent().on_serverList_doubleClicked)
         buttonSettings.clicked.connect(self.parent().on_buttonSettings_clicked)
         buttonAddServer.clicked.connect(self.parent().on_buttonAddServer_clicked)
         buttonExit.clicked.connect(self.parent().on_buttonExit_clicked)
@@ -261,12 +265,13 @@ class widgetPageMain(QWidget):
     def __init__(self, parent):
         super(widgetPageMain, self).__init__(parent)
 
-        serverDict      = self.serverGet()
+    def loadPage(self, parent, serverID):
+        serverDict      = self.serverGet(serverID)
         labelRss        = self.rssWidget()
         logoImage       = QLabel()
         bannerImage     = QLabel()
-        bannerImage.setPixmap(QPixmap(self.parent().webController.pullImage(serverDict['BANNER'])))
-        logoImage.setPixmap(QPixmap(self.parent().webController.pullImage(serverDict['LOGO'])))
+        bannerImage.setPixmap(QPixmap(parent.webController.pullImage(serverDict['BANNER'])))
+        logoImage.setPixmap(QPixmap(parent.webController.pullImage(serverDict['LOGO'])))
 
         labelDesc      = QLabel(serverDict['DESCRIPTION'])
         labelTitle     = QLabel(serverDict['NAME'])
@@ -274,8 +279,8 @@ class widgetPageMain(QWidget):
         buttonBack     = QPushButton("Back")
         buttonSettings = QPushButton("Settings")
 
-        buttonBack.clicked.connect(self.parent().on_buttonBack_clicked)
-        buttonSettings.clicked.connect(self.parent().on_buttonSettings_clicked)
+        buttonBack.clicked.connect(parent.on_buttonBack_clicked)
+        buttonSettings.clicked.connect(parent.on_buttonSettings_clicked)
 
         editUser     = QLineEdit("Enter")
         editPass     = QLineEdit("Enter")
@@ -302,12 +307,13 @@ class widgetPageMain(QWidget):
         layoutPage.addWidget(buttonBack,     0, 0)
         layoutPage.addWidget(labelInstall,   4, 0)
         layoutPage.addLayout(loginLayout,    3, 0)
+        self.setLayout(layoutPage)
  
     def rssWidget(self):
         return
 
-    def serverGet(self):
-        dbData = self.parent().dbServer.sqlGetOne(0)
+    def serverGet(self, id):
+        dbData = self.parent().dbServer.sqlGetOne(id)
         row = dbData[0]
         dataDict = {
                 'ID'          :row[0],
@@ -388,7 +394,7 @@ class widgetPageSetting(QWidget):
 class mainWindow(QMainWindow):
     webController = webControllerClass()
     dbServer      = sqlServer()
-    dbServers     = serverList()
+    dbServerList  = None
     layoutWindow  = None
     pageMain      = None
     pageList      = None
@@ -427,10 +433,11 @@ class mainWindow(QMainWindow):
         self.setWindowTitle("LauncherZ")
         self.setFixedSize(QSize(1100, 600))
 
-        self.pageMain    = widgetPageMain(self)
-        self.pageList    = widgetPageList(self)
-        self.pageServer  = widgetPageServer(self)
-        self.pageSetting = widgetPageSetting(self)
+        self.dbServerList = serverList(self)
+        self.pageMain     = widgetPageMain(self)
+        self.pageList     = widgetPageList(self)
+        self.pageServer   = widgetPageServer(self)
+        self.pageSetting  = widgetPageSetting(self)
 
 
         self.pageList.setStyleSheet(self.ssMain)
@@ -486,6 +493,10 @@ class mainWindow(QMainWindow):
 
     def on_buttonClear_clicked(self):
         return
+
+    def on_serverList_doubleClicked(self):
+        self.stackedWidget.indexOf(0).loadPage(self, self.sender().selectedItems().serverID)
+        self.stackedWidget.setCurrentIndex(0)
 
     def rssGen(self):
         # Create widgets for each page and vertical layout to return
