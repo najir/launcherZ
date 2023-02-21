@@ -11,8 +11,8 @@ class sqlServer():
     IP               TEXT NOT NULL,
     PORT             TEXT NOT NULL,
     INSTALL          TEXT NOT NULL,
-    LOGO             TEXT
-    BANNER           TEXT
+    LOGO             TEXT,
+    BANNER           TEXT,
     RSS              TEXT);
     """
 
@@ -27,6 +27,7 @@ class sqlServer():
 
         finally:
             if sqliteConnection:
+                sqliteConnection.commit()
                 sqliteConnection.close()
                 print('SQLite connection closed')
 
@@ -34,16 +35,16 @@ class sqlServer():
 # Insert into Database
 ######################################
     def sqlInsert(self, serverDict):
-        sqlInsert = "INSERT OR IGNORE INTO SERVERS("
+        sqlInsert = "INSERT INTO SERVERS("
         sqlInsert += "TITLE, DESCRIPTION, IP, PORT, INSTALL, LOGO, BANNER, RSS) VALUES("
-        sqlInsert += "'" + serverDict["serverTitle"] + "', "
+        sqlInsert += "'" + serverDict["serverTitle"]       + "', "
         sqlInsert += "'" + serverDict["serverDescription"] + "', "
-        sqlInsert += "'" + serverDict["serverIp"] + "', "
-        sqlInsert += "'" + serverDict["serverPort"] + "', "
-        sqlInsert += "'" + serverDict["serverInstall"] + "');"
-        sqlInsert += "'" + serverDict["serverLogo"] + "', "
-        sqlInsert += "'" + serverDict["serverBanner"] + "', "
-        sqlInsert += "'" + serverDict["serverRss"] + "', "
+        sqlInsert += "'" + serverDict["serverIp"]          + "', "
+        sqlInsert += "'" + serverDict["serverPort"]        + "', "
+        sqlInsert += "'" + serverDict["serverInstall"]     + "', "
+        sqlInsert += "'" + serverDict["serverLogo"]        + "', "
+        sqlInsert += "'" + serverDict["serverBanner"]      + "', "
+        sqlInsert += "'" + serverDict["serverRss"]         + "'); "
 
         try:
             sqliteConnection = sqlite3.connect('server.db')
@@ -55,6 +56,7 @@ class sqlServer():
 
         finally:
             if sqliteConnection:
+                sqliteConnection.commit()
                 sqliteConnection.close()
                 print('SQLite connection closed')
 
@@ -73,6 +75,7 @@ class sqlServer():
 
         finally:
             if sqliteConnection:
+                sqliteConnection.commit()
                 sqliteConnection.close()
                 print('SQLite connection closed')
 
@@ -96,6 +99,7 @@ class sqlServer():
 
         finally:
             if sqliteConnection:
+                sqliteConnection.commit()
                 sqliteConnection.close()
                 print('SQLite connection closed')
 
@@ -126,12 +130,12 @@ class sqlServer():
 ######################################
     def sqlGetAll(self):
         returnData = None
-        queryGetOne = "SELECT * FROM SERVERS"
+        queryGet = "SELECT * FROM SERVERS"
         try:
             sqliteConnection = sqlite3.connect('server.db')
             sqlCursor = sqliteConnection.cursor()
-            sqlCursor.execute(queryGetOne)
-            returnData = sqlCursor.fetchall()
+            sqlCursor.execute(queryGet)
+            returnData = sqlCursor.fetchall()  
 
         except sqlite3.Error as error:
             print('Error occurred - ', error)

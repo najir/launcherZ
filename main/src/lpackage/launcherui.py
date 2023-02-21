@@ -23,12 +23,12 @@ class serverList():
     }
 
     def __init__(self, parent):
-        boolExists = parent.dbServer.sqlGetOne(0)
+        boolExists = parent.dbServer.sqlGetOne(1)
         if not boolExists:
             self.myServer()
             parent.dbServer.sqlInsert(self.serverDict)
 
-            self.xServer
+            self.xServer()
             parent.dbServer.sqlInsert(self.serverDict)
 
             self.yServer()
@@ -87,26 +87,26 @@ class serverList():
 ######################################
 # Test widget for custom list item object
 ######################################
-class widgetServerItem(QListWidgetItem):
+class widgetServerItem(QWidget):
     serverID = None
-    def __init__(self, parent, dbData):
+    def __init__(self, dbData, parent = None):
         super(widgetServerItem, self).__init__(parent)
 
-        imageLogo = QImage()
-        imagePing = QImage()
-        imageLogo.scale()
-        imagePing.scale()
+        #imageLogo = QImage()
+        #imagePing = QImage()
+        #imageLogo.scale()
+        #imagePing.scale()
 
-        brushLogo = QBrush(imageLogo)
-        brushPing = QBrush(imagePing)
-        labelLogo = QLabel()
-        labelPing = QLabel()
-        labelLogo.setBackground(brushLogo)
-        labelPing.setBackground(brushPing)
+        #brushLogo = QBrush(imageLogo)
+        #brushPing = QBrush(imagePing)
+        #labelLogo = QLabel()
+        #labelPing = QLabel()
+        #labelLogo.setBackground(brushLogo)
+        #labelPing.setBackground(brushPing)
 
         self.serverID    = dbData['ID']
-        labelName        = QLabel()
-        labelDescription = QLabel()
+        labelName        = QLabel(dbData['TITLE'])
+        labelDescription = QLabel(dbData['DESCRIPTION'])
 
         itemLayout = QHBoxLayout()
         itemLayout.addWidget(labelName)
@@ -197,15 +197,16 @@ class widgetPageList(QWidget):
         buttonAddServer  = QPushButton("Add Server")
         buttonExit       = QPushButton("X")
         buttonExit.setFixedWidth(20)
-        listWidgetServer.setStyleSheet('background-image: ./rsc/img/list.png;')
+        listWidgetServer.setStyleSheet('QListWidget {border-image: url(./rsc/img/list.png) 0 0 0 0 stretch stretch;}')
+        listWidgetServer.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
 
         listWidgetServer.itemDoubleClicked.connect(self.parent().on_serverList_doubleClicked)
         buttonSettings.clicked.connect(self.parent().on_buttonSettings_clicked)
         buttonAddServer.clicked.connect(self.parent().on_buttonAddServer_clicked)
         buttonExit.clicked.connect(self.parent().on_buttonExit_clicked)
 
-        verticalSpacer   = QSpacerItem(1, 75, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
-        horizontalSpacer = QSpacerItem(50, 0, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
+        verticalSpacer   = QSpacerItem(1, 65, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
+        horizontalSpacer = QSpacerItem(65, 0, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
 
         labelVersion = QLabel("Version 0.1.0")
 
@@ -237,11 +238,11 @@ class widgetPageList(QWidget):
                 'LOGO'        :row[6],
                 'BANNER'      :row[7],
                 'RSS'         :row[8]})
-            item = QListWidgetItem()
+            item = QListWidgetItem(returnList)
             returnList.addItem(item)
 
-            dbItem = widgetServerItem(dbData)
-            item.setSizeHint(dbItem.minimumSizeHint)
+            dbItem = widgetServerItem(dataDict)
+            item.setSizeHint(dbItem.minimumSizeHint())
 
             returnList.setItemWidget(item, dbItem)
                 
@@ -253,15 +254,6 @@ class widgetPageList(QWidget):
 # Individual Server Pages
 ######################################
 class widgetPageMain(QWidget):
-    defaultDict = {
-        "serverDescription" : "Default",
-        "serverTitle"       : "Default",
-        "serverLogo"        : "Default",
-        "serverBanner"      : "Default",
-        "serverIp"          : "Default",
-        "serverInstall"     : "Default",
-        "serverRss"         : "Default"
-        }
     def __init__(self, parent):
         super(widgetPageMain, self).__init__(parent)
 
@@ -392,8 +384,8 @@ class widgetPageSetting(QWidget):
 # Main Window for UI
 ######################################
 class mainWindow(QMainWindow):
-    webController = webControllerClass()
-    dbServer      = sqlServer()
+    webController = None
+    dbServer      = None
     dbServerList  = None
     layoutWindow  = None
     pageMain      = None
@@ -433,11 +425,14 @@ class mainWindow(QMainWindow):
         self.setWindowTitle("LauncherZ")
         self.setFixedSize(QSize(1100, 600))
 
-        self.dbServerList = serverList(self)
-        self.pageMain     = widgetPageMain(self)
-        self.pageList     = widgetPageList(self)
-        self.pageServer   = widgetPageServer(self)
-        self.pageSetting  = widgetPageSetting(self)
+        self.webController = webControllerClass()
+        self.dbServer      = sqlServer()
+        self.dbServerList  = serverList(self)
+
+        self.pageMain      = widgetPageMain(self)
+        self.pageList      = widgetPageList(self)
+        self.pageServer    = widgetPageServer(self)
+        self.pageSetting   = widgetPageSetting(self)
 
 
         self.pageList.setStyleSheet(self.ssMain)
@@ -469,12 +464,15 @@ class mainWindow(QMainWindow):
         self.stackedWidget.setCurrentIndex(1)
 
     def on_buttonBack_clicked(self):
+        self.stackedWidget.indexOf(2).updateList()
         self.stackedWidget.setCurrentIndex(2)
     
     def on_buttonCancel_clicked(self):
+        self.stackedWidget.indexOf(2).updateList()
         self.stackedWidget.setCurrentIndex(2)
 
     def on_buttonSaveServer_clicked(self):
+        self.stackedWidget.indexOf(2).updateList()
         self.stackedWidget.setCurrentIndex(2)
         #serverList.serverDict.update({"nameText" : widget.layoutMain.layoutEdit1.lineServerName.text()})
         #serverList.serverDict.update({"descriptionText" : widget.layoutMain.layoutEdit2.lineServerDesc.text()})
