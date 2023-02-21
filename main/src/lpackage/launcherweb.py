@@ -35,18 +35,19 @@ class webControllerClass():
 # Takes URL and returns img at link
 ######################################
     def pullImage(self, url):
-        imgData = urllib.request.urlopen(url).read()
+        imgData = urllib.request.urlopen(url)
         return imgData
 
 ######################################
 # Sends a ping to the server and returns T/F
 ######################################
-    def serverPing(self, serverIP):
+# For build complexity sake I will be redoing this to only use the socket module :/
+    def serverPing(self, serverIP, serverPort):
         returnBool = 0
-        ipAddress = input(serverIP)
         scanner = nmap.PortScanner()
-        host = socket.gethostbyname(ipAddress)
-        scanner.host(host, '1', '-v')
-        if scanner[host].state():                # This will need to be changed so it actually returns properly
+        host = socket.gethostbyname(serverIP)
+        status = scanner.scan(serverIP, serverPort)
+        status = status['scan'][serverIP]['tcp'][int(serverPort)]['state']
+        if status != 'down':                # This will need to be changed so it actually returns properly
             returnBool = 1
         return returnBool

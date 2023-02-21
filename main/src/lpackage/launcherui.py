@@ -41,10 +41,10 @@ class serverList():
         self.serverDict = {
             "serverTitle"        : "LimitZ",
             "serverDescription"  : "My personal server hosted on amazon web services",
-            "serverIp"           : "111.111.111.111",
-            "serverPort"         : "11111",
-            "serverInstall"      : "example link",
-            "serverLogo"         : "",
+            "serverIp"           : "127.0.0.1",
+            "serverPort"         : "75",
+            "serverInstall"      : "https://www.google.com",
+            "serverLogo"         : "https://i.imgur.com/suCqtLh.png",
             "serverBanner"       : "",
             "serverRss"          : ""
     }
@@ -52,10 +52,10 @@ class serverList():
         self.serverDict = {
             "serverTitle"        : "Euro server",
             "serverDescription"  : "Test element",
-            "serverIp"           : "",
-            "serverPort"         : "",
-            "serverInstall"      : "",
-            "serverLogo"         : "",
+            "serverIp"           : "127.0.0.1",
+            "serverPort"         : "75",
+            "serverInstall"      : "https://www.google.com",
+            "serverLogo"         : "https://i.imgur.com/suCqtLh.png",
             "serverBanner"       : "",
             "serverRss"          : ""
     }
@@ -63,10 +63,10 @@ class serverList():
         self.serverDict = {
             "serverTitle"        : "United Server",
             "serverDescription"  : "another test element",
-            "serverIp"           : "",
-            "serverPort"         : "",
-            "serverInstall"      : "",
-            "serverLogo"         : "",
+            "serverIp"           : "127.0.0.1",
+            "serverPort"         : "75",
+            "serverInstall"      : "https://www.google.com",
+            "serverLogo"         : "https://i.imgur.com/suCqtLh.png",
             "serverBanner"       : "",
             "serverRss"          : ""
     }
@@ -74,10 +74,10 @@ class serverList():
         self.serverDict = {
             "serverTitle"        : "community 1",
             "serverDescription"  : "3rd test server",
-            "serverIp"           : "",
-            "serverPort"         : "",
-            "serverInstall"      : "",
-            "serverLogo"         : "",
+            "serverIp"           : "127.0.0.1",
+            "serverPort"         : "75",
+            "serverInstall"      : "https://www.google.com",
+            "serverLogo"         : "https://i.imgur.com/suCqtLh.png",
             "serverBanner"       : "",
             "serverRss"          : ""
     }
@@ -92,28 +92,30 @@ class widgetServerItem(QWidget):
     def __init__(self, dbData, parent = None):
         super(widgetServerItem, self).__init__(parent)
 
-        #imageLogo = QImage()
-        imagePing = QImage('img:serverdown.png')
+        logoPull  = self.parent().webController.pullImage("https://imgur.com/gallery/kbEJJPg")
+        imageLogo = QPixmap(logoPull)
+        imagePing = QPixmap('img:serverdown.png')
         #imageLogo.scale()
         #imagePing.scale()
 
-        if self.parent().webController.serverPing(dbData['IP']):
-            imagePing = QImage('img:serverup.png')
+        if self.parent().webController.serverPing(dbData['IP'], dbData['PORT']):
+            imagePing = QPixmap('img:serverup.png')
 
-        #brushLogo = QBrush(imageLogo)
-        brushPing = QBrush(imagePing)
-        #labelLogo = QLabel()
+        labelLogo = QLabel()
         labelPing = QLabel()
-        #labelLogo.setBackground(brushLogo)
-        labelPing.setBackground(brushPing)
+        labelLogo.setPixmap(imageLogo)
+        labelPing.setPixmap(imagePing)
 
         self.serverID    = dbData['ID']
         labelName        = QLabel(dbData['TITLE'])
         labelDescription = QLabel(dbData['DESCRIPTION'])
+        labelIp          = QLabel(dbData['IP'])
 
         itemLayout = QHBoxLayout()
+        itemLayout.addWidget(labelLogo)
         itemLayout.addWidget(labelName)
         itemLayout.addWidget(labelDescription)
+        itemLayout.addWidget(labelIp)
         itemLayout.addWidget(labelPing)
 
         self.setLayout(itemLayout)
@@ -253,7 +255,7 @@ class widgetPageList(QWidget):
             item = QListWidgetItem(returnList)
             returnList.addItem(item)
 
-            dbItem = widgetServerItem(dataDict)
+            dbItem = widgetServerItem(dataDict, self.parent())
             item.setSizeHint(dbItem.minimumSizeHint())
 
             returnList.setItemWidget(item, dbItem)
@@ -276,7 +278,7 @@ class widgetPageList(QWidget):
                 'RSS'         :row[8]}
 
         list   = self.listWidgetServer
-        dbItem = widgetServerItem(dataDict)
+        dbItem = widgetServerItem(dataDict, self.parent().parent())
         item   = QListWidgetItem(list)
         list.addItem(item)
         item.setSizeHint(dbItem.minimumSizeHint())
