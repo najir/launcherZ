@@ -87,7 +87,7 @@ class sqlServer():
         queryUpdate += "TITLE = '"         +serverDict['serverTitle'] + "', "
         queryUpdate += "DESCRIPTION = '"   +serverDict['serverDescription'] + "', "
         queryUpdate += "IP = '"            +serverDict['serverIP'] + "', "
-        queryUpdate += "INSTALL = '"       +serverDict['serverInstall'] + "');"
+        queryUpdate += "PORT = '"          +serverDict['serverPort'] + "');"
         queryUpdate += "WHERE ID = "       +serverID
         try:
             sqliteConnection = sqlite3.connect('server.db')

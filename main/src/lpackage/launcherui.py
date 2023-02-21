@@ -50,8 +50,8 @@ class serverList():
     }
     def xServer(self):
         self.serverDict = {
-            "serverTitle"        : "",
-            "serverDescription"  : "",
+            "serverTitle"        : "Euro server",
+            "serverDescription"  : "Test element",
             "serverIp"           : "",
             "serverPort"         : "",
             "serverInstall"      : "",
@@ -61,8 +61,8 @@ class serverList():
     }
     def yServer(self):
         self.serverDict = {
-            "serverTitle"        : "",
-            "serverDescription"  : "",
+            "serverTitle"        : "United Server",
+            "serverDescription"  : "another test element",
             "serverIp"           : "",
             "serverPort"         : "",
             "serverInstall"      : "",
@@ -72,8 +72,8 @@ class serverList():
     }
     def zServer(self):
         self.serverDict = {
-            "serverTitle"        : "",
-            "serverDescription"  : "",
+            "serverTitle"        : "community 1",
+            "serverDescription"  : "3rd test server",
             "serverIp"           : "",
             "serverPort"         : "",
             "serverInstall"      : "",
@@ -122,6 +122,10 @@ class widgetServerItem(QWidget):
 # Adding addition servers page
 ######################################
 class widgetPageServer(QWidget):
+    lineServerName = None
+    lineServerDesc = None
+    lineServerIP   = None
+    lineServerPort = None
     def __init__(self, parent):
         super(widgetPageServer, self).__init__(parent)
 
@@ -140,10 +144,10 @@ class widgetPageServer(QWidget):
         buttonSaveServer = QPushButton("Save")
         buttonCancel     = QPushButton("Cancel")
 
-        lineServerName = QLineEdit("")
-        lineServerDesc = QLineEdit("")
-        lineServerIP   = QLineEdit("")
-        lineServerPort = QLineEdit("")
+        self.lineServerName = QLineEdit("")
+        self.lineServerDesc = QLineEdit("")
+        self.lineServerIP   = QLineEdit("")
+        self.lineServerPort = QLineEdit("")
 
         verticalSpacer   = QSpacerItem(1, 75, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
         horizontalSpacer = QSpacerItem(50, 0, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
@@ -151,19 +155,19 @@ class widgetPageServer(QWidget):
 
         layoutEdit1 = QHBoxLayout()
         layoutEdit1.addWidget(labelServerName)
-        layoutEdit1.addWidget(lineServerName)
+        layoutEdit1.addWidget(self.lineServerName)
         
         layoutEdit2 = QHBoxLayout()
         layoutEdit2.addWidget(labelServerDesc)
-        layoutEdit2.addWidget(lineServerDesc)
+        layoutEdit2.addWidget(self.lineServerDesc)
 
         layoutEdit3 = QHBoxLayout()
         layoutEdit3.addWidget(labelServerIP)
-        layoutEdit3.addWidget(lineServerIP)
+        layoutEdit3.addWidget(self.lineServerIP)
 
         layoutEdit4 = QHBoxLayout()
         layoutEdit4.addWidget(labelServerPort)
-        layoutEdit4.addWidget(lineServerPort)
+        layoutEdit4.addWidget(self.lineServerPort)
 
         layoutMain = QGridLayout()
         layoutMain.addWidget(buttonSaveServer, 0, 5, 1, 1)
@@ -190,17 +194,18 @@ class widgetPageServer(QWidget):
 # Server List Page
 ######################################
 class widgetPageList(QWidget):
+    listWidgetServer = None
     def __init__(self, parent):
         super(widgetPageList, self).__init__(parent)
-        listWidgetServer = self.listUpdate()
+        self.listWidgetServer = self.listUpdate()
         buttonSettings   = QPushButton("Settings")
         buttonAddServer  = QPushButton("Add Server")
         buttonExit       = QPushButton("X")
         buttonExit.setFixedWidth(20)
-        listWidgetServer.setStyleSheet('QListWidget {border-image: url(./rsc/img/list.png) 0 0 0 0 stretch stretch;}')
-        listWidgetServer.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.listWidgetServer.setStyleSheet('QListWidget {border-image: url(./rsc/img/list.png) 0 0 0 0 stretch stretch;}')
+        self.listWidgetServer.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
 
-        listWidgetServer.itemDoubleClicked.connect(self.parent().on_serverList_doubleClicked)
+        self.listWidgetServer.itemDoubleClicked.connect(self.parent().on_serverList_doubleClicked)
         buttonSettings.clicked.connect(self.parent().on_buttonSettings_clicked)
         buttonAddServer.clicked.connect(self.parent().on_buttonAddServer_clicked)
         buttonExit.clicked.connect(self.parent().on_buttonExit_clicked)
@@ -211,7 +216,7 @@ class widgetPageList(QWidget):
         labelVersion = QLabel("Version 0.1.0")
 
         layoutServer = QGridLayout()
-        layoutServer.addWidget(listWidgetServer, 3, 1, 1, 5)
+        layoutServer.addWidget(self.listWidgetServer, 3, 1, 1, 5)
         layoutServer.addWidget(labelVersion,     6, 1, 1, 1)
         layoutServer.addWidget(buttonSettings,   1, 5, 1, 1)
         layoutServer.addWidget(buttonAddServer,  1, 4, 1, 1)
@@ -247,6 +252,15 @@ class widgetPageList(QWidget):
             returnList.setItemWidget(item, dbItem)
                 
         return returnList 
+
+    def listAddOne(self, dataDict):
+        self.parent().dbServer.sqlInsert(dataDict)
+        list   = self.listWidgetServer
+        dbItem = widgetServerItem(dataDict)
+        item   = QListWidgetItem(list)
+        list.addItem(item)
+        item.setSizeHint(dbItem.minimumSizeHint())
+        list.setItemWidget(item, dbItem)
 
 
 
@@ -447,8 +461,8 @@ class mainWindow(QMainWindow):
         self.stackedWidget.addWidget(self.pageSetting)
         self.stackedWidget.setCurrentIndex(2)
 
-        bgImage = QImage("img:bg.png")
-        bgImage.scaled(QSize(1100,600))
+        bgImage = QPixmap("img:bg.png")
+        bgImage.scaled(QSize(1100, 600), Qt.IgnoreAspectRatio, Qt.SmoothTransformation)
         mainPalette = QPalette()
         mainPalette.setBrush(QPalette.Window, QBrush(bgImage))
 
@@ -464,15 +478,24 @@ class mainWindow(QMainWindow):
         self.stackedWidget.setCurrentIndex(1)
 
     def on_buttonBack_clicked(self):
-        self.stackedWidget.indexOf(2).updateList()
         self.stackedWidget.setCurrentIndex(2)
     
     def on_buttonCancel_clicked(self):
-        self.stackedWidget.indexOf(2).updateList()
         self.stackedWidget.setCurrentIndex(2)
 
     def on_buttonSaveServer_clicked(self):
-        self.stackedWidget.indexOf(2).updateList()
+        name = self.pageServer.lineServerName.text()
+        desc = self.pageServer.lineServerDesc.text()
+        Ip   = self.pageServer.lineServerIP.text()
+        port = self.pageServer.lineServerPort.text()
+        serverData = {
+            'NAME'        : name,
+            'DESCRIPTION' : desc,
+            'IP'          : Ip,
+            'PORT'        : port       
+            }
+
+        self.stackedWidget.widget(2).listAddOn(serverData)
         self.stackedWidget.setCurrentIndex(2)
         #serverList.serverDict.update({"nameText" : widget.layoutMain.layoutEdit1.lineServerName.text()})
         #serverList.serverDict.update({"descriptionText" : widget.layoutMain.layoutEdit2.lineServerDesc.text()})
