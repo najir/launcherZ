@@ -93,16 +93,19 @@ class widgetServerItem(QWidget):
         super(widgetServerItem, self).__init__(parent)
 
         #imageLogo = QImage()
-        #imagePing = QImage()
+        imagePing = QImage('img:serverdown.png')
         #imageLogo.scale()
         #imagePing.scale()
 
+        if self.parent().webController.serverPing(dbData['IP']):
+            imagePing = QImage('img:serverup.png')
+
         #brushLogo = QBrush(imageLogo)
-        #brushPing = QBrush(imagePing)
+        brushPing = QBrush(imagePing)
         #labelLogo = QLabel()
-        #labelPing = QLabel()
+        labelPing = QLabel()
         #labelLogo.setBackground(brushLogo)
-        #labelPing.setBackground(brushPing)
+        labelPing.setBackground(brushPing)
 
         self.serverID    = dbData['ID']
         labelName        = QLabel(dbData['TITLE'])
@@ -111,6 +114,7 @@ class widgetServerItem(QWidget):
         itemLayout = QHBoxLayout()
         itemLayout.addWidget(labelName)
         itemLayout.addWidget(labelDescription)
+        itemLayout.addWidget(labelPing)
 
         self.setLayout(itemLayout)
 
@@ -201,7 +205,10 @@ class widgetPageList(QWidget):
         buttonSettings   = QPushButton("Settings")
         buttonAddServer  = QPushButton("Add Server")
         buttonExit       = QPushButton("X")
+        buttonSettings.setFixedWidth(100)
+        buttonAddServer.setFixedWidth(100)
         buttonExit.setFixedWidth(20)
+
         self.listWidgetServer.setStyleSheet('QListWidget {border-image: url(./rsc/img/list.png) 0 0 0 0 stretch stretch;}')
         self.listWidgetServer.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
 
@@ -253,8 +260,21 @@ class widgetPageList(QWidget):
                 
         return returnList 
 
-    def listAddOne(self, dataDict):
-        self.parent().dbServer.sqlInsert(dataDict)
+    # Method called post init, p = stackedW p.p = window
+    def listAddOne(self, serverData):
+        self.parent().parent().dbServer.sqlInsert(serverData)
+        row = self.parent().parent().dbServer.sqlGetLast()[0]
+        dataDict = {
+                'ID'          :row[0],
+                'TITLE'       :row[1],
+                'DESCRIPTION' :row[2],
+                'IP'          :row[3],
+                'PORT'        :row[4],
+                'INSTALL'     :row[5],
+                'LOGO'        :row[6],
+                'BANNER'      :row[7],
+                'RSS'         :row[8]}
+
         list   = self.listWidgetServer
         dbItem = widgetServerItem(dataDict)
         item   = QListWidgetItem(list)
@@ -469,7 +489,7 @@ class mainWindow(QMainWindow):
         self.setWindowFlag(Qt.FramelessWindowHint)
         self.setPalette(mainPalette)
         self.setCentralWidget(self.stackedWidget)
-        self.setStyleSheet("border: 3px solid rgb(0, 51, 51);")
+        self.setStyleSheet("border: 3px solid rgba(51, 77, 77, 180);")
 
     def on_buttonSettings_clicked(self):
         self.stackedWidget.setCurrentIndex(3)
@@ -489,13 +509,17 @@ class mainWindow(QMainWindow):
         Ip   = self.pageServer.lineServerIP.text()
         port = self.pageServer.lineServerPort.text()
         serverData = {
-            'NAME'        : name,
-            'DESCRIPTION' : desc,
-            'IP'          : Ip,
-            'PORT'        : port       
+            "serverTitle"        : name,
+            "serverDescription"  : desc,
+            "serverIp"           : Ip,
+            "serverPort"         : port,
+            "serverInstall"      : "",
+            "serverLogo"         : "",
+            "serverBanner"       : "",
+            "serverRss"          : ""
             }
 
-        self.stackedWidget.widget(2).listAddOn(serverData)
+        self.stackedWidget.widget(2).listAddOne(serverData)
         self.stackedWidget.setCurrentIndex(2)
         #serverList.serverDict.update({"nameText" : widget.layoutMain.layoutEdit1.lineServerName.text()})
         #serverList.serverDict.update({"descriptionText" : widget.layoutMain.layoutEdit2.lineServerDesc.text()})

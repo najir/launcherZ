@@ -146,3 +146,22 @@ class sqlServer():
                 print('SQLite connection closed')
 
         return returnData
+
+    def sqlGetLast(self):
+        returnData = None
+        queryGetOne = "SELECT * FROM SERVERS ORDER BY ID DESC LIMIT 1"
+        try:
+            sqliteConnection = sqlite3.connect('server.db')
+            sqlCursor = sqliteConnection.cursor()
+            sqlCursor.execute(queryGetOne)
+            returnData = sqlCursor.fetchall()
+
+        except sqlite3.Error as error:
+            print('Error occurred - ', error)
+
+        finally:
+            if sqliteConnection:
+                sqliteConnection.close()
+                print('SQLite connection closed')
+
+        return returnData
