@@ -36,3 +36,5 @@ For example I will be looking to implement;
 
 ### Attributes
 	https://github.com/rockisch/mhf-iel
+	Gajah Mada - Flaticon
+	freepik - Flaticon

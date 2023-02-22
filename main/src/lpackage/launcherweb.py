@@ -2,7 +2,7 @@
 # Web Module for all web requests and interactions
 ######################################
 from bs4 import BeautifulSoup
-import urllib.request, urllib.error
+import urllib.request, urllib.error, urllib.parse
 import nmap, socket
 
 class webControllerClass():
@@ -35,8 +35,10 @@ class webControllerClass():
 # Takes URL and returns img at link
 ######################################
     def pullImage(self, url):
-        imgData = urllib.request.urlopen(url)
-        return imgData
+        textUrl = urllib.parse.quote_plus(url)
+        w = open("./rsc/img/" + textUrl, 'wb')
+        w.write(urllib.request.urlopen(url).read())
+        w.close()
 
 ######################################
 # Sends a ping to the server and returns T/F
@@ -45,7 +47,6 @@ class webControllerClass():
     def serverPing(self, serverIP, serverPort):
         returnBool = 0
         scanner = nmap.PortScanner()
-        host = socket.gethostbyname(serverIP)
         status = scanner.scan(serverIP, serverPort)
         status = status['scan'][serverIP]['tcp'][int(serverPort)]['state']
         if status != 'down':                # This will need to be changed so it actually returns properly

@@ -1,7 +1,10 @@
 import sys
+import urllib.parse
 from PySide6.QtCore import QSize, Qt, QDir, QPoint
-from PySide6.QtGui import QPixmap, QImage, QBrush, QPalette
-from PySide6.QtWidgets import QApplication, QWidget, QMainWindow, QPushButton, QLabel, QVBoxLayout, QListWidget, QStackedWidget, QListWidgetItem, QLineEdit, QCheckBox, QStackedLayout, QHBoxLayout, QLineEdit, QGridLayout, QSpacerItem, QSizePolicy
+from PySide6.QtGui import QPixmap, QImage, QBrush, QPalette, QAction, QIcon
+from PySide6.QtWidgets import QApplication, QWidget, QMainWindow, QPushButton, QLabel, QVBoxLayout, QStatusBar
+from PySide6.QtWidgets import QListWidget, QStackedWidget, QListWidgetItem, QLineEdit, QCheckBox, QToolBar
+from PySide6.QtWidgets import QStackedLayout, QHBoxLayout, QLineEdit, QGridLayout, QSpacerItem, QSizePolicy
 from .launcherdb import sqlServer
 from .launcherweb import webControllerClass
 
@@ -91,12 +94,25 @@ class widgetServerItem(QWidget):
     serverID = None
     def __init__(self, dbData, parent = None):
         super(widgetServerItem, self).__init__(parent)
+        ssItem = """
+        QWidget{
+        border: 3px solid black;
+        background-color : rgba(38, 38, 38, 220);
+        }
+        QLabel{ 
+        background: none; 
+        font: 12pt "Yu Gothic UI";
+        border: none; 
+        }
+        """
 
-        logoPull  = self.parent().webController.pullImage("https://imgur.com/gallery/kbEJJPg")
+        if not dbData['LOGO']:
+            dbData.update({'LOGO' : 'https://i.imgur.com/suCqtLh.png'})
+            
+        self.parent().webController.pullImage(dbData['LOGO'])
+        logoPull  = "./rsc/img/" + urllib.parse.quote_plus(dbData['LOGO'])
         imageLogo = QPixmap(logoPull)
         imagePing = QPixmap('img:serverdown.png')
-        #imageLogo.scale()
-        #imagePing.scale()
 
         if self.parent().webController.serverPing(dbData['IP'], dbData['PORT']):
             imagePing = QPixmap('img:serverup.png')
@@ -105,11 +121,19 @@ class widgetServerItem(QWidget):
         labelPing = QLabel()
         labelLogo.setPixmap(imageLogo)
         labelPing.setPixmap(imagePing)
+        labelLogo.setFixedSize(50, 50)
+        labelLogo.setScaledContents(True)
+        labelPing.setFixedSize(10, 10)
+        labelPing.setScaledContents(True)
 
         self.serverID    = dbData['ID']
         labelName        = QLabel(dbData['TITLE'])
         labelDescription = QLabel(dbData['DESCRIPTION'])
         labelIp          = QLabel(dbData['IP'])
+        labelDescription.setWordWrap(True)
+        labelName.setWordWrap(True)
+        labelName.setFixedWidth(125)
+        labelIp.setFixedWidth(100)
 
         itemLayout = QHBoxLayout()
         itemLayout.addWidget(labelLogo)
@@ -118,6 +142,8 @@ class widgetServerItem(QWidget):
         itemLayout.addWidget(labelIp)
         itemLayout.addWidget(labelPing)
 
+        self.setAttribute(Qt.WA_StyledBackground)
+        self.setStyleSheet(ssItem)
         self.setLayout(itemLayout)
 
 
@@ -139,24 +165,21 @@ class widgetPageServer(QWidget):
         labelServerDesc = QLabel("Server Description:")
         labelServerIP   = QLabel("Server IP:")
         labelServerPort = QLabel("Server Port:")
-        buttonExit      = QPushButton("X")
 
-        buttonExit.setMaximumWidth(20)
         labelServerName.setMinimumWidth(175)
         labelServerDesc.setMinimumWidth(175)
         labelServerIP.setMinimumWidth(175)
         labelServerPort.setMinimumWidth(175)
 
         buttonSaveServer = QPushButton("Save")
-        buttonCancel     = QPushButton("Cancel")
+        buttonSaveServer.setFixedSize(150, 30)
 
         self.lineServerName = QLineEdit("")
         self.lineServerDesc = QLineEdit("")
         self.lineServerIP   = QLineEdit("")
         self.lineServerPort = QLineEdit("")
 
-        verticalSpacer   = QSpacerItem(1, 75, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
-        horizontalSpacer = QSpacerItem(50, 0, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
+        horizontalSpacer = QSpacerItem(65, 0, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
 
 
         layoutEdit1 = QHBoxLayout()
@@ -176,21 +199,16 @@ class widgetPageServer(QWidget):
         layoutEdit4.addWidget(self.lineServerPort)
 
         layoutMain = QGridLayout()
-        layoutMain.addWidget(buttonSaveServer, 0, 5, 1, 1)
-        layoutMain.addWidget(buttonCancel,     0, 4, 1, 1)
-        layoutMain.addWidget(buttonExit,       0, 7, 1, 1)
+        layoutMain.addWidget(buttonSaveServer, 1, 1, 1, 1)
         layoutMain.addLayout(layoutEdit1,      2, 1, 1, 5)
         layoutMain.addLayout(layoutEdit2,      3, 1, 1, 5)
         layoutMain.addLayout(layoutEdit3,      4, 1, 1, 5)
         layoutMain.addLayout(layoutEdit4,      5, 1, 1, 5)
-        layoutMain.addItem(verticalSpacer,     1, 0)
         layoutMain.addItem(horizontalSpacer,   0, 6)
         layoutMain.addItem(horizontalSpacer,   0, 0)
         layoutMain.setAlignment(Qt.AlignTop)
 
         buttonSaveServer.clicked.connect(self.parent().on_buttonSaveServer_clicked)
-        buttonCancel.clicked.connect(self.parent().on_buttonCancel_clicked)
-        buttonExit.clicked.connect(self.parent().on_buttonExit_clicked)
 
         self.setLayout(layoutMain)
 
@@ -204,34 +222,26 @@ class widgetPageList(QWidget):
     def __init__(self, parent):
         super(widgetPageList, self).__init__(parent)
         self.listWidgetServer = self.listUpdate()
-        buttonSettings   = QPushButton("Settings")
-        buttonAddServer  = QPushButton("Add Server")
-        buttonExit       = QPushButton("X")
-        buttonSettings.setFixedWidth(100)
-        buttonAddServer.setFixedWidth(100)
-        buttonExit.setFixedWidth(20)
+        buttonAddServer       = QPushButton("Add Server")
+        buttonAddServer.setFixedSize(150, 30)
+        self.listWidgetServer.setSpacing(7)
 
-        self.listWidgetServer.setStyleSheet('QListWidget {border-image: url(./rsc/img/list.png) 0 0 0 0 stretch stretch;}')
+        self.listWidgetServer.setStyleSheet('QListWidget {border-image: url(./rsc/img/list.png) 5 0 0 0 stretch stretch;}')
         self.listWidgetServer.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
 
         self.listWidgetServer.itemDoubleClicked.connect(self.parent().on_serverList_doubleClicked)
-        buttonSettings.clicked.connect(self.parent().on_buttonSettings_clicked)
         buttonAddServer.clicked.connect(self.parent().on_buttonAddServer_clicked)
-        buttonExit.clicked.connect(self.parent().on_buttonExit_clicked)
 
-        verticalSpacer   = QSpacerItem(1, 65, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
+        verticalSpacer   = QSpacerItem(1, 30, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
         horizontalSpacer = QSpacerItem(65, 0, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
 
-        labelVersion = QLabel("Version 0.1.0")
 
         layoutServer = QGridLayout()
         layoutServer.addWidget(self.listWidgetServer, 3, 1, 1, 5)
-        layoutServer.addWidget(labelVersion,     6, 1, 1, 1)
-        layoutServer.addWidget(buttonSettings,   1, 5, 1, 1)
-        layoutServer.addWidget(buttonAddServer,  1, 4, 1, 1)
-        layoutServer.addWidget(buttonExit,       1, 7, 1, 1)    
+        layoutServer.addWidget(buttonAddServer,  2, 1, 1, 1)
         layoutServer.addItem(verticalSpacer,     2, 0)
         layoutServer.addItem(horizontalSpacer,   4, 6)
+        layoutServer.addItem(verticalSpacer,     6, 0)
         layoutServer.addItem(verticalSpacer,     5, 0)
         layoutServer.addItem(horizontalSpacer,   4, 0)
 
@@ -304,11 +314,6 @@ class widgetPageMain(QWidget):
         labelDesc      = QLabel(serverDict['DESCRIPTION'])
         labelTitle     = QLabel(serverDict['NAME'])
         labelInstall   = QLabel(serverDict['INSTALL'])
-        buttonBack     = QPushButton("Back")
-        buttonSettings = QPushButton("Settings")
-
-        buttonBack.clicked.connect(parent.on_buttonBack_clicked)
-        buttonSettings.clicked.connect(parent.on_buttonSettings_clicked)
 
         editUser     = QLineEdit("Enter")
         editPass     = QLineEdit("Enter")
@@ -331,10 +336,9 @@ class widgetPageMain(QWidget):
         layoutPage.addWidget(labelRss,       1, 3)
         layoutPage.addWidget(logoImage,      0, 1)
         layoutPage.addWidget(bannerImage,    2, 0)
-        layoutPage.addWidget(buttonSettings, 0, 3)
-        layoutPage.addWidget(buttonBack,     0, 0)
         layoutPage.addWidget(labelInstall,   4, 0)
         layoutPage.addLayout(loginLayout,    3, 0)
+
         self.setLayout(layoutPage)
  
     def rssWidget(self):
@@ -364,16 +368,13 @@ class widgetPageMain(QWidget):
 class widgetPageSetting(QWidget):
     def __init__(self, parent):
         super(widgetPageSetting, self).__init__(parent)
-        buttonBack  = QPushButton("Back")
         buttonSave  = QPushButton("Save")
         buttonClear = QPushButton("Clear Data?")
-        buttonExit  = QPushButton("X")
         labelSkip   = QLabel("Skip Server List?")
         labelUser   = QLabel("Save Username?")
         checkSkip   = QCheckBox()
         checkUser   = QCheckBox()
 
-        buttonExit.setFixedWidth(20)
         checkSkip.setStyleSheet("border: none")
         checkUser.setStyleSheet("border: none")
         labelSkip.setFixedWidth(150)
@@ -398,8 +399,6 @@ class widgetPageSetting(QWidget):
 
         layoutMain = QGridLayout()
         layoutMain.addWidget(buttonSave,       0, 5, 1, 1)
-        layoutMain.addWidget(buttonBack,       0, 4, 1, 1)
-        layoutMain.addWidget(buttonExit,       0, 7, 1, 1)
         layoutMain.addWidget(buttonClear,      4, 1, 1, 1)
         layoutMain.addLayout(layoutEdit1,      2, 1, 1, 5)
         layoutMain.addLayout(layoutEdit2,      3, 1, 1, 5)
@@ -407,13 +406,59 @@ class widgetPageSetting(QWidget):
         layoutMain.addItem(horizontalSpacer,   0, 6)
         layoutMain.addItem(horizontalSpacer,   0, 0)
         layoutMain.setAlignment(Qt.AlignTop)
-
-        buttonExit.clicked.connect(self.parent().on_buttonExit_clicked)
-        buttonBack.clicked.connect(self.parent().on_buttonBack_clicked)
-        buttonClear.clicked.connect(self.parent().on_buttonClear_clicked)
         
         self.setLayout(layoutMain)
 
+
+class toolBarWidget(QWidget):
+    def __init__(self, parent):
+        super(toolBarWidget, self).__init__(parent)
+        ssTool = """
+        QPushButton{
+        background-color: rgb(28, 53, 74);
+        border: 1px solid rgb(0, 0, 0);
+        }
+
+        """
+
+        imageSettings = QIcon("img:setting.png")
+        imageBack     = QIcon("img:back.png")
+        imageExit     = QIcon("img:x.png")
+
+        buttonSettings = QPushButton()
+        buttonBack     = QPushButton()
+        buttonExit     = QPushButton()
+        buttonExit.clicked.connect(self.parent().on_buttonExit_clicked)
+        buttonBack.clicked.connect(self.parent().on_buttonBack_clicked)
+        buttonSettings.clicked.connect(self.parent().on_buttonSettings_clicked)
+
+        buttonSettings.setIcon(imageSettings)
+        buttonBack.setIcon(imageBack)
+        buttonExit.setIcon(imageExit)
+
+        buttonSettings.setFixedSize(QSize(36, 36))
+        buttonBack.setFixedSize(QSize(36, 36))
+        buttonExit.setFixedSize(QSize(36, 36))
+
+        buttonSettings.setIconSize(QSize(30, 30))
+        buttonBack.setIconSize(QSize(30, 30))
+        buttonExit.setIconSize(QSize(30, 30))
+
+        labelVersion = QLabel("Version 0.1.0")
+
+        horizontalSpacer = QSpacerItem(900, 0, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
+
+        layoutTool = QHBoxLayout()
+        layoutTool.addWidget(labelVersion)
+        layoutTool.addItem(horizontalSpacer)
+        layoutTool.addWidget(buttonBack)
+        layoutTool.addWidget(buttonSettings)
+        layoutTool.addWidget(buttonExit)
+
+        layoutTool.setContentsMargins(0, 0, 5, 0)
+        self.setAttribute(Qt.WA_StyledBackground)
+        self.setStyleSheet(ssTool)
+        self.setLayout(layoutTool)
 
 
 ######################################
@@ -428,10 +473,15 @@ class mainWindow(QMainWindow):
     pageList      = None
     pageServer    = None
     pageSetting   = None
+    mainTool      = None
     pageIndex     = 0
 
     ssMain = """
-    QListWidget, QLabel{
+    QListWidget{
+        background-color : rgba(51, 51, 0, 220);
+        border: 1px solid rgba(51, 77, 77, 180);
+    }
+    QLabel{
         background-color : rgba(51, 51, 0, 220);
         border : 1px solid rgb(163, 163, 117);
     }
@@ -446,7 +496,16 @@ class mainWindow(QMainWindow):
     }
     QWidget{
         font : 700 12pt "Segoe Print";
-        color : rgb(159, 190, 223)
+        color : rgb(159, 190, 223);
+    }
+    """
+    ssWindow = """
+    QToolBar{
+        background-color : rgb(21, 39, 55);
+        border: none
+    }
+    QMainWindow{
+        border: 3px solid rgba(21, 39, 55, 200);
     }
     """
     ssLog  = ""
@@ -470,6 +529,11 @@ class mainWindow(QMainWindow):
         self.pageServer    = widgetPageServer(self)
         self.pageSetting   = widgetPageSetting(self)
 
+        self.mainTool      = QToolBar()
+        self.mainTool.setFixedHeight(50)
+        self.mainTool.setIconSize(QSize(32,32))
+        self.mainTool.setToolButtonStyle(Qt.ToolButtonIconOnly)
+        self.mainTool.addWidget(toolBarWidget(self))
 
         self.pageList.setStyleSheet(self.ssMain)
         self.pageServer.setStyleSheet(self.ssMain)
@@ -488,10 +552,12 @@ class mainWindow(QMainWindow):
         mainPalette = QPalette()
         mainPalette.setBrush(QPalette.Window, QBrush(bgImage))
 
+        self.setStatusBar(QStatusBar(self))
         self.setWindowFlag(Qt.FramelessWindowHint)
         self.setPalette(mainPalette)
         self.setCentralWidget(self.stackedWidget)
-        self.setStyleSheet("border: 3px solid rgba(51, 77, 77, 180);")
+        self.addToolBar(self.mainTool)
+        self.setStyleSheet(self.ssWindow)
 
     def on_buttonSettings_clicked(self):
         self.stackedWidget.setCurrentIndex(3)
