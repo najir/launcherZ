@@ -1,6 +1,7 @@
 ######################################
 # Web Module for all web requests and interactions
 ######################################
+from wsgiref import headers
 from bs4 import BeautifulSoup
 import urllib.request, urllib.error, urllib.parse
 import nmap, socket
@@ -15,16 +16,16 @@ class webControllerClass():
 ######################################
     def pullRss(self, url):
         int = 0
-        urlData = urllib.request.Request(url)
-        parse = BeautifulSoup(urlData.content, 'xml')
-        xmlData = parse.find_all('entry', limit=3)
+        urlData = urllib.request.urlopen(urllib.request.Request(url, method='GET', headers={'User-Agent' : 'Mozilla/5.0'})).read().decode('utf8')
+        parse = BeautifulSoup(urlData, 'xml')
+        xmlData = parse.find_all('item', limit=3)
         rssDict = {}
 
         for entry in xmlData:
             rssDict[int] = {
                 "NAME" : entry.title.text,
-                "DESCRIPTION" : entry.summary.text,
-                "LINK" : entry.link['href']
+                "DESCRIPTION" : entry.description.text,
+                "LINK" : entry.link.text
                 }
             int += 1
 

@@ -33,6 +33,7 @@ For example I will be looking to implement;
 	PySide6   
 	python-nmap   
 	BeautifulSoup   
+	lxml   
 
 ### Attributes
 	https://github.com/rockisch/mhf-iel

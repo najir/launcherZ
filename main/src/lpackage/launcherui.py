@@ -49,7 +49,7 @@ class serverList():
             "serverInstall"      : "https://www.google.com",
             "serverLogo"         : "https://i.imgur.com/suCqtLh.png",
             "serverBanner"       : "https://i.imgur.com/UebFpMK.jpeg",
-            "serverRss"          : ""
+            "serverRss"          : "https://www.gameskinny.com/games/monster-hunter-world/?format=rss"
     }
     def xServer(self):
         self.serverDict = {
@@ -105,7 +105,6 @@ class widgetServerItem(QWidget):
         border: none; 
         }
         """
-
         if not dbData['LOGO']:
             dbData.update({'LOGO' : 'https://i.imgur.com/suCqtLh.png'})
             
@@ -312,8 +311,14 @@ class widgetPageMain(QWidget):
         QWidget{
         border: 3px solid black;
         background-color : rgba(120, 120, 0, 120);
+        font: 12pt "Yu Gothic UI";
+        color : rgb(159, 190, 223);
         }
-        QWidget#lDesc, QWidget#lTitle, QWidget#lInstall, QWidget#lLogo, QWidget#lBanner{
+        QWidget#lBanner{
+        background-color: none;
+        border: 3px solid black;
+        }
+        QWidget#lDesc, QWidget#lTitle, QWidget#lInstall, QWidget#lLogo{
         background-color: none;
         border: none;
         }
@@ -329,12 +334,11 @@ class widgetPageMain(QWidget):
         background: none;
         border: none;
         }
-
         """
 
         self.setObjectName('pageMain')
-        serverDict      = self.serverGet(serverID)
-        labelRss        = self.rssWidget()
+        serverDict      = self.serverGet(parent, serverID)
+        labelRss        = self.rssWidget(parent, serverDict['RSS'])
         logoImage       = QLabel()
         bannerImage     = QLabel()
 
@@ -358,6 +362,8 @@ class widgetPageMain(QWidget):
         labelDesc      = QLabel(serverDict['DESCRIPTION'])
         labelTitle     = QLabel(serverDict['TITLE'])
         labelInstall   = QLabel(serverDict['INSTALL'])
+        labelDesc.setFixedWidth(750)
+        labelTitle.setFixedWidth(100)
 
         labelDesc.setObjectName("lDesc")
         labelTitle.setObjectName("lTitle")
@@ -375,8 +381,8 @@ class widgetPageMain(QWidget):
         infoLayout.addWidget(labelTitle)
         infoLayout.addWidget(labelDesc)
         infoLayout.addWidget(labelInstall)
+        infoLayout.setAlignment(Qt.AlignLeft)
         infoWrapper.setLayout(infoLayout)
-        infoWrapper
 
         editUser     = QLineEdit("Username")
         editPass     = QLineEdit("Password")
@@ -408,11 +414,48 @@ class widgetPageMain(QWidget):
         self.setStyleSheet(ssPage)
         self.setLayout(layoutPage)
  
-    def rssWidget(self):
-        return QLabel("rss")
+    def rssWidget(self, parent, rssFeed):
+        ssFeed = """
+        QWidget#wFeed{
+        background-color: rgb(45, 45, 65);
+        border: 3px solid black;
+        }
+        QWidget{
+        background-color: rgb(25, 25, 45);
+        border: 1px solid black;
+        }
+        QLabel{
+        background-color: none;
+        border: none;
+        }
+        """
+        returnFeed = QLabel("rss")
+        if rssFeed:
+            returnFeed = QWidget()
+            returnFeed.setObjectName('wFeed')
+            returnLayout = QVBoxLayout()
 
-    def serverGet(self, id):
-        row = self.parent().parent().dbServer.sqlGetOne(id)[0]
+            rssDict = parent.webController.pullRss(rssFeed)
+
+            for rss in rssDict:
+                rssLayout = QVBoxLayout()
+                labelName = QLabel(" " + rssDict[rss]['NAME'])
+                labelDesc = QLabel(" " + rssDict[rss]['DESCRIPTION'])
+                labelLink = QLabel(" " + rssDict[rss]['LINK'])
+                labelDesc.setWordWrap(True)
+
+                rssWrapper = QWidget()
+                rssLayout.addWidget(labelName)
+                rssLayout.addWidget(labelDesc)
+                rssLayout.addWidget(labelLink)
+                rssWrapper.setLayout(rssLayout)
+                returnLayout.addWidget(rssWrapper)
+            returnFeed.setLayout(returnLayout)
+        returnFeed.setStyleSheet(ssFeed)
+        return returnFeed
+
+    def serverGet(self, parent, id):
+        row = parent.dbServer.sqlGetOne(id)[0]
         dataDict = {
                 'ID'          :row[0],
                 'TITLE'       :row[1],
@@ -573,9 +616,6 @@ class mainWindow(QMainWindow):
         border: 3px solid rgba(21, 39, 55, 200);
     }
     """
-    ssLog  = ""
-    ssFeed = ""
-    ssInfo = ""
 
 
     def __init__(self):
