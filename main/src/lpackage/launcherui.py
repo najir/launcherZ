@@ -48,7 +48,7 @@ class serverList():
             "serverPort"         : "75",
             "serverInstall"      : "https://www.google.com",
             "serverLogo"         : "https://i.imgur.com/suCqtLh.png",
-            "serverBanner"       : "",
+            "serverBanner"       : "https://i.imgur.com/UebFpMK.jpeg",
             "serverRss"          : ""
     }
     def xServer(self):
@@ -59,7 +59,7 @@ class serverList():
             "serverPort"         : "75",
             "serverInstall"      : "https://www.google.com",
             "serverLogo"         : "https://i.imgur.com/suCqtLh.png",
-            "serverBanner"       : "",
+            "serverBanner"       : "https://i.imgur.com/UebFpMK.jpeg",
             "serverRss"          : ""
     }
     def yServer(self):
@@ -70,7 +70,7 @@ class serverList():
             "serverPort"         : "75",
             "serverInstall"      : "https://www.google.com",
             "serverLogo"         : "https://i.imgur.com/suCqtLh.png",
-            "serverBanner"       : "",
+            "serverBanner"       : "https://i.imgur.com/UebFpMK.jpeg",
             "serverRss"          : ""
     }
     def zServer(self):
@@ -81,7 +81,7 @@ class serverList():
             "serverPort"         : "75",
             "serverInstall"      : "https://www.google.com",
             "serverLogo"         : "https://i.imgur.com/suCqtLh.png",
-            "serverBanner"       : "",
+            "serverBanner"       : "https://i.imgur.com/UebFpMK.jpeg",
             "serverRss"          : ""
     }
 
@@ -304,49 +304,115 @@ class widgetPageMain(QWidget):
         super(widgetPageMain, self).__init__(parent)
 
     def loadPage(self, parent, serverID):
+        ssPage = """
+        QWidget#pageMain{
+        border: 3px solid black;
+        background-color : rgba(50, 50, 50, 220);
+        }
+        QWidget{
+        border: 3px solid black;
+        background-color : rgba(120, 120, 0, 120);
+        }
+        QWidget#lDesc, QWidget#lTitle, QWidget#lInstall, QWidget#lLogo, QWidget#lBanner{
+        background-color: none;
+        border: none;
+        }
+        QLineEdit{
+        background-color: rgba(120, 120, 120, 120);
+        }
+        QPushButton{
+        background-color : rgb(51, 51, 0);
+        border-image: url(./rsc/img/button.png) 0 0 0 0 stretch stretch;
+        border : none;
+        }
+        QCheckBox{
+        background: none;
+        border: none;
+        }
+
+        """
+
+        self.setObjectName('pageMain')
         serverDict      = self.serverGet(serverID)
         labelRss        = self.rssWidget()
         logoImage       = QLabel()
         bannerImage     = QLabel()
-        bannerImage.setPixmap(QPixmap(parent.webController.pullImage(serverDict['BANNER'])))
-        logoImage.setPixmap(QPixmap(parent.webController.pullImage(serverDict['LOGO'])))
+
+        if not serverDict['BANNER']:
+            serverDict.update({"BANNER" : "https://i.imgur.com/UebFpMK.jpeg"})
+
+        if not serverDict['LOGO']:
+            serverDict.update({"LOGO" : "https://i.imgur.com/suCqtLh.png"})
+
+        parent.webController.pullImage(serverDict['BANNER'])
+        parent.webController.pullImage(serverDict['LOGO'])
+        logoPull  = "./rsc/img/" + urllib.parse.quote_plus(serverDict['LOGO'])
+        bannerPull  = "./rsc/img/" + urllib.parse.quote_plus(serverDict['BANNER'])
+
+        bannerImage.setPixmap(QPixmap(bannerPull))
+        logoImage.setPixmap(QPixmap(logoPull))
+        bannerImage.setFixedSize(QSize(980, 100))
+        logoImage.setFixedSize(QSize(100, 100))
+        logoImage.setScaledContents(True)
 
         labelDesc      = QLabel(serverDict['DESCRIPTION'])
-        labelTitle     = QLabel(serverDict['NAME'])
+        labelTitle     = QLabel(serverDict['TITLE'])
         labelInstall   = QLabel(serverDict['INSTALL'])
 
-        editUser     = QLineEdit("Enter")
-        editPass     = QLineEdit("Enter")
+        labelDesc.setObjectName("lDesc")
+        labelTitle.setObjectName("lTitle")
+        labelInstall.setObjectName("lInstall")
+        bannerImage.setObjectName("lBanner")
+        logoImage.setObjectName("lLogo")
+
+        imageLayout = QHBoxLayout()
+        imageLayout.addWidget(logoImage)
+        imageLayout.addWidget(bannerImage)
+
+        infoWrapper = QWidget()
+
+        infoLayout = QHBoxLayout()
+        infoLayout.addWidget(labelTitle)
+        infoLayout.addWidget(labelDesc)
+        infoLayout.addWidget(labelInstall)
+        infoWrapper.setLayout(infoLayout)
+        infoWrapper
+
+        editUser     = QLineEdit("Username")
+        editPass     = QLineEdit("Password")
         checkboxUser = QCheckBox("Save Username?")
         buttonLog    = QPushButton("Login")
         buttonPlay   = QPushButton("Start Game")
         loginLayout  = QVBoxLayout()
+        buttonPlay.hide()
 
-        loginLayout.addWidget(QLabel("User Name"))
+        loginWrapper = QWidget()
+
         loginLayout.addWidget(editUser)
-        loginLayout.addWidget(QLabel("Password"))
         loginLayout.addWidget(editPass)
         loginLayout.addWidget(checkboxUser)
         loginLayout.addWidget(buttonLog)
-        buttonPlay.hide()
+        loginLayout.setSpacing(5)
+        loginWrapper.setLayout(loginLayout)
+
+        verticalSpacer   = QSpacerItem(1, 75, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
+        horizontalSpacer = QSpacerItem(50, 1, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
 
         layoutPage = QGridLayout()
-        layoutPage.addWidget(labelTitle,     0, 2)
-        layoutPage.addWidget(labelDesc,      1, 0)
-        layoutPage.addWidget(labelRss,       1, 3)
-        layoutPage.addWidget(logoImage,      0, 1)
-        layoutPage.addWidget(bannerImage,    2, 0)
-        layoutPage.addWidget(labelInstall,   4, 0)
-        layoutPage.addLayout(loginLayout,    3, 0)
+        layoutPage.addLayout(imageLayout,    0, 0, 1, 8)
+        layoutPage.addWidget(infoWrapper,    1, 0, 1, 8)
+        layoutPage.addWidget(labelRss,       2, 4, 6, 4)
+        layoutPage.addWidget(loginWrapper,   6, 1, 1, 2)
 
+        self.setAttribute(Qt.WA_StyledBackground)
+        self.setStyleSheet(ssPage)
         self.setLayout(layoutPage)
  
     def rssWidget(self):
-        return
+        return QLabel("rss")
 
     def serverGet(self, id):
-        dbData = self.parent().dbServer.sqlGetOne(id)
-        row = dbData[0]
+        row = self.parent().parent().dbServer.sqlGetOne(id)[0]
         dataDict = {
                 'ID'          :row[0],
                 'TITLE'       :row[1],
@@ -418,7 +484,6 @@ class toolBarWidget(QWidget):
         background-color: rgb(28, 53, 74);
         border: 1px solid rgb(0, 0, 0);
         }
-
         """
 
         imageSettings = QIcon("img:setting.png")
@@ -589,10 +654,7 @@ class mainWindow(QMainWindow):
 
         self.stackedWidget.widget(2).listAddOne(serverData)
         self.stackedWidget.setCurrentIndex(2)
-        #serverList.serverDict.update({"nameText" : widget.layoutMain.layoutEdit1.lineServerName.text()})
-        #serverList.serverDict.update({"descriptionText" : widget.layoutMain.layoutEdit2.lineServerDesc.text()})
-        #serverList.serverDict.update({"serverIP" : widget.layoutMain.layoutEdit3.lineServerIP.text()})
-    
+
     def on_buttonExit_clicked(self):
         sys.exit()
 
@@ -607,8 +669,8 @@ class mainWindow(QMainWindow):
     def on_buttonClear_clicked(self):
         return
 
-    def on_serverList_doubleClicked(self):
-        self.stackedWidget.indexOf(0).loadPage(self, self.sender().selectedItems().serverID)
+    def on_serverList_doubleClicked(self, item):
+        self.stackedWidget.widget(0).loadPage(self ,self.sender().itemWidget(item).serverID)
         self.stackedWidget.setCurrentIndex(0)
 
     def rssGen(self):

@@ -147,6 +147,9 @@ class sqlServer():
 
         return returnData
 
+######################################
+# Get last entry in db
+######################################
     def sqlGetLast(self):
         returnData = None
         queryGetOne = "SELECT * FROM SERVERS ORDER BY ID DESC LIMIT 1"
