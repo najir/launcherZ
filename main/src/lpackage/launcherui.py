@@ -47,7 +47,7 @@ class serverList():
             "serverIp"           : "127.0.0.1",
             "serverPort"         : "75",
             "serverInstall"      : "https://www.google.com",
-            "serverLogo"         : "https://i.imgur.com/suCqtLh.png",
+            "serverLogo"         : "https://i.imgur.com/WNrTWEo.png",
             "serverBanner"       : "https://i.imgur.com/UebFpMK.jpeg",
             "serverRss"          : "https://www.gameskinny.com/games/monster-hunter-world/?format=rss"
     }
@@ -58,7 +58,7 @@ class serverList():
             "serverIp"           : "127.0.0.1",
             "serverPort"         : "75",
             "serverInstall"      : "https://www.google.com",
-            "serverLogo"         : "https://i.imgur.com/suCqtLh.png",
+            "serverLogo"         : "https://i.imgur.com/lJyffjm.png",
             "serverBanner"       : "https://i.imgur.com/UebFpMK.jpeg",
             "serverRss"          : ""
     }
@@ -69,7 +69,7 @@ class serverList():
             "serverIp"           : "127.0.0.1",
             "serverPort"         : "75",
             "serverInstall"      : "https://www.google.com",
-            "serverLogo"         : "https://i.imgur.com/suCqtLh.png",
+            "serverLogo"         : "https://i.imgur.com/EHh3k7l.png",
             "serverBanner"       : "https://i.imgur.com/UebFpMK.jpeg",
             "serverRss"          : ""
     }
@@ -80,7 +80,7 @@ class serverList():
             "serverIp"           : "127.0.0.1",
             "serverPort"         : "75",
             "serverInstall"      : "https://www.google.com",
-            "serverLogo"         : "https://i.imgur.com/suCqtLh.png",
+            "serverLogo"         : "https://i.imgur.com/Dk15Ntr.png",
             "serverBanner"       : "https://i.imgur.com/UebFpMK.jpeg",
             "serverRss"          : ""
     }

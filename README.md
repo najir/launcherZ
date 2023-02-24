@@ -11,16 +11,16 @@ https://github.com/rockisch/mhf-iel
 This project extends on that framework and looks to create a GUI that provides new additions and QOL changes compared
 to the current launcher.  
 Currently I have implement a variety of features to benefit players and server owners   
-- Add custom servers to the server list
+- Add your own custom servers to the server list
 - Server IP, details, Logo/Icon, and name are viewable from the list
 - Server uptimes are checked on serverlist load
 - Servers can provide a link to install instructions for new users
-- Server Banners, logos are show on server pages and can be changed dynamically
+- Server Banners, logos are shown on server pages and can be changed dynamically
 - Servers can provide an RSS feed to be shown on their server page
 
 To be Implemented:
-- Password encrytion
 - Connect launcher to ieless
+- Password encrytion
 - server specific calls(User info from databses for example)
 
 - Project utilises PySide6 to take advantage of the QT6 framework. In this particular case QT Designer and QT
